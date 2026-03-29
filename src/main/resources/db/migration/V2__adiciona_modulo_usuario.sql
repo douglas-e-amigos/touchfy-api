@@ -5,12 +5,13 @@ CREATE TABLE IF NOT EXISTS usuario(
     senha VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     data_nascimento DATE NOT NULL,
+    caminho_da_foto_de_perfil VARCHAR(255),
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS permissao(
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS permissao(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS papel(
@@ -34,7 +35,7 @@ CREATE TABLE IF NOT EXISTS papel(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS permissao_do_usuario(
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS permissao_do_usuario(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS papel_do_usuario(
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS papel_do_usuario(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS permissao_do_papel(
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS permissao_do_papel(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS usuario_bloquado(
@@ -91,5 +92,5 @@ CREATE TABLE IF NOT EXISTS usuario_bloquado(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS musica(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tag(
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS tag(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genero_musical(
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS genero_musical(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genero_da_musica(
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS genero_da_musica(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS musica_da_tag(
@@ -58,5 +58,5 @@ CREATE TABLE IF NOT EXISTS musica_da_tag(
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID NULL
+    deletado_por UUID DEFAULT NULL
 );
