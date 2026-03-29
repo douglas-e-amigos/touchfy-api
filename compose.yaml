@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: touchfy_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    container_name: touchfy_app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
