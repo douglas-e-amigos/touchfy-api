@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS usuario(
     nome_usuario VARCHAR(200) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    email_verificado BOOLEAN DEFAULT FALSE
     data_nascimento DATE NOT NULL,
     caminho_da_foto_de_perfil VARCHAR(255),
     criado_em TIMESTAMP,
