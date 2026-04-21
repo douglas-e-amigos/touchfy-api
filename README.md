@@ -32,3 +32,6 @@ No momento de elaborar os testes, não precisa testar todas as classes do projet
 
 Coisas como: controllers, interfaces ou records não devem ser testadas.
 
+## Referências
+
+O repositório possui uma aba de wiki, onde alguns diretrizes de desenvolvimento estão melhor detalhadas. Leia os tópicos nessa aba.

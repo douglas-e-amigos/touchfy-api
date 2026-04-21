@@ -4,24 +4,24 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
+import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordMaker;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CriarUsuarioUseCaseTest {
 
     private UsuarioRepository repository;
     private UsuarioMapper mapper;
-    private PasswordEncoder encoder;
+    private PasswordMaker passwordMaker;
 
     private CriarUsuarioUseCase useCase;
 
@@ -29,9 +29,9 @@ class CriarUsuarioUseCaseTest {
     void setup() {
         repository = mock(UsuarioRepository.class);
         mapper = mock(UsuarioMapper.class);
-        encoder = mock(PasswordEncoder.class);
+        passwordMaker = mock(PasswordMaker.class);
 
-        useCase = new CriarUsuarioUseCase(repository, mapper, encoder);
+        useCase = new CriarUsuarioUseCase(repository, mapper, passwordMaker);
     }
 
     private Usuario usuarioMock() {
@@ -64,7 +64,7 @@ class CriarUsuarioUseCaseTest {
         var usuario = usuarioMock();
 
         when(mapper.toDomain(request)).thenReturn(usuario);
-        when(encoder.encode("senha")).thenReturn("hash");
+        when(passwordMaker.execute("senha")).thenReturn("hash");
 
         useCase.execute(request);
 
@@ -106,11 +106,11 @@ class CriarUsuarioUseCaseTest {
         var usuario = usuarioMock();
 
         when(mapper.toDomain(request)).thenReturn(usuario);
-        when(encoder.encode("senha")).thenReturn("hashSeguro");
+        when(passwordMaker.execute("senha")).thenReturn("hashSeguro");
 
         useCase.execute(request);
 
-        verify(encoder).encode("senha");
+        verify(passwordMaker).execute("senha");
         verify(repository).salvar(usuario);
     }
 }
