@@ -1,4 +1,4 @@
-package com.ufrn.dct.bsi.touchfy.domain.user.models;
+package com.ufrn.dct.bsi.touchfy.domain.usuario.models;
 
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import com.ufrn.dct.bsi.touchfy.shared.models.Imagem;
@@ -31,20 +31,21 @@ public class Usuario {
             final Boolean emailVerificado,
             final Date dataNascimento
     ) {
-        if (id == null)
-            throw new IllegalArgumentException("ID é obrigatório");
-        if (nome == null)
+        if (nome == null) {
             throw new IllegalArgumentException("Nome é obrigatório");
-        if (nomeUsuario == null)
+        }
+        if (nomeUsuario == null) {
             throw new IllegalArgumentException("Nome de usuário é obrigatório");
-        if (senha == null)
+        }
+        if (senha == null) {
             throw new IllegalArgumentException("Senha é obrigatória");
-        if (email == null)
+        }
+        if (email == null) {
             throw new IllegalArgumentException("E-mail é obrigatório");
-        if (emailVerificado == null)
-            throw new IllegalArgumentException("E-mail verificado é obrigatório");
-        if (dataNascimento == null)
+        }
+        if (dataNascimento == null) {
             throw new IllegalArgumentException("Data nascimento é obrigatória");
+        }
 
         this.id = id;
         this.nome = nome;
