@@ -4,10 +4,10 @@ import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity()
+@Entity
 @Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,12 +31,12 @@ public class UsuarioEntity {
     @Column(name = "email", nullable = false, length = 255, unique = true)
     private Email email;
 
-    @Column(name = "caminho_da_imagem_de_perfil", length = 255)
+    @Column(name = "caminho_da_foto_de_perfil", length = 255)
     private String caminhoDaImagemDePerfil;
 
     @Column(name = "email_verificado", nullable = false)
     private Boolean emailVerificado = false;
 
     @Column(name = "data_nascimento", nullable = false)
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
 }
