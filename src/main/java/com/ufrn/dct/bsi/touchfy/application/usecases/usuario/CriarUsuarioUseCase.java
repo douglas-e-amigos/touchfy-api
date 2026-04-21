@@ -4,9 +4,9 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 
+import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordMaker;
 import lombok.AllArgsConstructor;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CriarUsuarioUseCase {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordMaker passwordMaker;
 
     public void execute(final CriarUsuarioRequest request) {
         validarSenha(request.senha(), request.senhaNovamente());
@@ -24,7 +24,7 @@ public class CriarUsuarioUseCase {
     }
 
     private String gerarHash(final String senha) {
-        return passwordEncoder.encode(senha);
+        return passwordMaker.execute(senha);
     }
 
     private void validarSenha(final String senha, final String senhaNovamente) {
