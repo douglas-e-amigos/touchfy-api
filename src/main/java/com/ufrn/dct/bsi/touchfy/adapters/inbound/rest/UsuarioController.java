@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.adapters.inbound.rest;
 
+import com.ufrn.dct.bsi.touchfy.adapters.inbound.rest.routes.UsuarioRoute;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.CriarUsuarioUseCase;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.NovoRecursoResponse;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping(UsuarioRoute.ROOT)
 @AllArgsConstructor
 public class UsuarioController {
     private final CriarUsuarioUseCase criarUsuarioUseCase;
