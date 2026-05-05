@@ -23,3 +23,7 @@ spring:
 logging:
   level:
     org.flywaydb: DEBUG
+
+jwt:
+  secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
+  expiration: 86400000

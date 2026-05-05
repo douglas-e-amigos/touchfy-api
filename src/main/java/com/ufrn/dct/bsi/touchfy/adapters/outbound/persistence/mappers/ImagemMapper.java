@@ -7,18 +7,12 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ImagemMapper {
     @Named("mapPathToImage")
-    default Imagem toDomain(String path) {
-        return Imagem.builder()
-                .caminhoDoArquivo(path)
-                .nome(null)
-                .tamanhoEmBytes(null)
-                .textoAlternativo(null)
-                .extensao(null)
-                .build();
+    default Imagem toDomain(final String path) {
+        return new Imagem(null, path, null, null, null);
     }
 
     @Named("mapImageToPath")
-    default String toEntity(Imagem imagem) {
+    default String toEntity(final Imagem imagem) {
         if (imagem == null) {
             return null;
         }

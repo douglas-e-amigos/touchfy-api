@@ -32,6 +32,15 @@ No momento de elaborar os testes, não precisa testar todas as classes do projet
 
 Coisas como: controllers, interfaces ou records não devem ser testadas.
 
+## Swagger
+
+Todos os endpoints e DTOs devem estar documentados usando as anotações do Swagger para java. Isso permite com que 
+cada endpoint seja acessável através do endpoint a baixo:
+
+````
+swagger-ui/index.html
+````
+
 ## Referências
 
 O repositório possui uma aba de wiki, onde alguns diretrizes de desenvolvimento estão melhor detalhadas. Leia os tópicos nessa aba.

@@ -3,6 +3,7 @@ package com.ufrn.dct.bsi.touchfy.domain.usuario.models;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import com.ufrn.dct.bsi.touchfy.shared.models.Imagem;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 public class Usuario {
     private UUID id;
     private String nome;

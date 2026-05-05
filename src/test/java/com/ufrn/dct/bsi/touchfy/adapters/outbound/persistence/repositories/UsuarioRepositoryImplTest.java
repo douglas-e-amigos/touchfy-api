@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -88,5 +89,52 @@ class UsuarioRepositoryImplTest {
 
         inOrder.verify(usuarioMapper).toEntity(usuario);
         inOrder.verify(jpaRepository).save(entity);
+    }
+
+    @Test
+    void deveRetornarUsuarioQuandoEncontrado() {
+        final String nomeUsuario = "usuario_teste";
+        final UsuarioEntity entity = new UsuarioEntity();
+
+        when(jpaRepository.findByNomeUsuario(nomeUsuario))
+                .thenReturn(Optional.of(entity));
+
+        final Optional<UsuarioEntity> resultado =
+                repository.acharPeloNomeDeUsuario(nomeUsuario);
+
+        assertTrue(resultado.isPresent());
+        assertEquals(entity, resultado.get());
+
+        verify(jpaRepository, times(1))
+                .findByNomeUsuario(nomeUsuario);
+    }
+
+    @Test
+    void deveRetornarOptionalVazioQuandoNaoEncontrado() {
+        final String nomeUsuario = "inexistente";
+
+        when(jpaRepository.findByNomeUsuario(nomeUsuario))
+                .thenReturn(Optional.empty());
+
+        final Optional<UsuarioEntity> resultado =
+                repository.acharPeloNomeDeUsuario(nomeUsuario);
+
+        assertTrue(resultado.isEmpty());
+
+        verify(jpaRepository, times(1))
+                .findByNomeUsuario(nomeUsuario);
+    }
+
+    @Test
+    void deveDelegarChamadaParaJpaRepository() {
+        final String nomeUsuario = "usuario_teste";
+
+        when(jpaRepository.findByNomeUsuario(nomeUsuario))
+                .thenReturn(Optional.empty());
+
+        repository.acharPeloNomeDeUsuario(nomeUsuario);
+
+        verify(jpaRepository, only())
+                .findByNomeUsuario(nomeUsuario);
     }
 }

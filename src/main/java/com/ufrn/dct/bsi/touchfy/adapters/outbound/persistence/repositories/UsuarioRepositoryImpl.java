@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @AllArgsConstructor
 public class UsuarioRepositoryImpl implements UsuarioRepository {
@@ -20,5 +22,10 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     @Override
     public UsuarioEntity salvar(final Usuario usuario) {
         return jpaRepository.save(usuarioMapper.toEntity(usuario));
+    }
+
+    @Override
+    public Optional<UsuarioEntity> acharPeloNomeDeUsuario(final String nomeUsuario) {
+        return jpaRepository.findByNomeUsuario(nomeUsuario);
     }
 }
