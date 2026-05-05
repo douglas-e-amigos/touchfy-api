@@ -3,11 +3,13 @@ package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -136,5 +138,72 @@ class UsuarioRepositoryImplTest {
 
         verify(jpaRepository, only())
                 .findByNomeUsuario(nomeUsuario);
+    }
+
+    @Test
+    void deveAtualizarUsuarioParcialmenteQuandoEncontrado() {
+        final var id = UUID.randomUUID();
+        final var request = new AtualizarUsuarioRequest(
+                "Novo Nome",
+                "novo_username",
+                LocalDate.of(2000, 1, 1)
+        );
+
+        final var entity = new UsuarioEntity();
+
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.save(entity)).thenReturn(entity);
+
+        repository.atualizarUsuarioParcialmente(id, request);
+
+        verify(jpaRepository).findById(id);
+        verify(usuarioMapper).updateEntity(request, entity);
+        verify(jpaRepository).save(entity);
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoUsuarioNaoEncontradoParaAtualizacao() {
+        final var id = UUID.randomUUID();
+        final var request = new AtualizarUsuarioRequest(
+                "Novo Nome",
+                "novo_username",
+                LocalDate.of(2000, 1, 1)
+        );
+
+        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        final RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> repository.atualizarUsuarioParcialmente(id, request)
+        );
+
+        assertEquals("Usuário não encontrado.", exception.getMessage());
+
+        verify(jpaRepository).findById(id);
+        verifyNoInteractions(usuarioMapper);
+        verify(jpaRepository, never()).save(any());
+    }
+
+    @Test
+    void deveChamarMapperAntesDeSalvarNaAtualizacaoParcial() {
+        final var id = UUID.randomUUID();
+        final var request = new AtualizarUsuarioRequest(
+                "Novo Nome",
+                "novo_username",
+                LocalDate.of(2000, 1, 1)
+        );
+
+        final var entity = new UsuarioEntity();
+
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.save(entity)).thenReturn(entity);
+
+        repository.atualizarUsuarioParcialmente(id, request);
+
+        final var inOrder = inOrder(jpaRepository, usuarioMapper);
+
+        inOrder.verify(jpaRepository).findById(id);
+        inOrder.verify(usuarioMapper).updateEntity(request, entity);
+        inOrder.verify(jpaRepository).save(entity);
     }
 }
