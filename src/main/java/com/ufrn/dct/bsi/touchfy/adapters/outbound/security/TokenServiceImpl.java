@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String generateToken(final Usuario usuario) {
         return Jwts.builder()
-                .subject(usuario.getId().toString())
+                .subject(usuario.getNomeUsuario())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
