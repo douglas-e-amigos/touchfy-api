@@ -1,7 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.security;
 
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
-import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +21,12 @@ class UsuarioDetalhesServiceImplTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    @Mock
-    private UsuarioMapper usuarioMapper;
-
     private UsuarioDetalhesServiceImpl service;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new UsuarioDetalhesServiceImpl(usuarioRepository, usuarioMapper);
+        service = new UsuarioDetalhesServiceImpl(usuarioRepository);
     }
 
     private UsuarioEntity criarUsuario() {
