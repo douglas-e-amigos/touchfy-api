@@ -13,3 +13,4 @@ public class Imagem {
     private Double tamanhoEmBytes;
     private String textoAlternativo;
 }
+
