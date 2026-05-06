@@ -41,6 +41,39 @@ cada endpoint seja acessável através do endpoint a baixo:
 swagger-ui/index.html
 ````
 
+### Acessando a UI
+
+Com os containers rodando, acesse:
+
+````
+http://localhost:3909
+````
+
+### Criando um bucket
+
+1. Acesse a UI do Garage
+2. Vá na seção **Keys** e crie uma chave de acesso — guarde o `Access Key ID` e o `Secret Access Key`
+3. Vá na seção **Buckets** e clique em **Create bucket**
+4. Dê o nome `touchfy-uploads` ao bucket
+5. Na página do bucket, vá em **Allow key** e adicione a chave criada com permissão de leitura e escrita
+
+### Configurando as credenciais
+
+Após criar a chave, adicione as credenciais no `application.yaml`:
+
+```yaml
+storage:
+  endpoint: http://garage:3900
+  access-key: SUA_ACCESS_KEY
+  secret-key: SUA_SECRET_KEY
+  bucket-name: touchfy-uploads
+  bucket-url: http://garage:3900/touchfy-uploads
+```
+
+### Deletando um bucket
+
+O Garage não permite deletar um bucket com arquivos. Esvazie o bucket primeiro pela UI e depois clique em **Delete** na página do bucket.
+
 ## Referências
 
 O repositório possui uma aba de wiki, onde alguns diretrizes de desenvolvimento estão melhor detalhadas. Leia os tópicos nessa aba.
