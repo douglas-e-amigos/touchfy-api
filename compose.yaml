@@ -9,10 +9,42 @@ services:
     ports:
       - "5432:5432"
 
+  garage:
+    image: dxflrs/garage:v2.3.0
+    container_name: garage
+    restart: unless-stopped
+    ports:
+      - "3900:3900"
+      - "3902:3902"
+      - "3903:3903"
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - garage-meta:/var/lib/garage/meta
+      - garage-data:/var/lib/garage/data
+
+  garage-ui:
+    image: khairul169/garage-webui:latest
+    container_name: garage-ui
+    restart: unless-stopped
+    ports:
+      - "3909:3909"
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+    environment:
+      - API_BASE_URL=http://garage:3903
+      - S3_ENDPOINT_URL=http://garage:3900
+    depends_on:
+      - garage
+
   app:
     build: .
     container_name: touchfy_app
     depends_on:
+      - garage
       - postgres
     ports:
       - "8080:8080"
+
+volumes:
+  garage-meta:
+  garage-data:
