@@ -27,3 +27,15 @@ logging:
 jwt:
   secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
   expiration: 86400000
+
+garage:
+  admin:
+    endpoint: http://garage:3903
+    token: "0qYrJTwNxc+JO/yWuIRZA8G6Hr0HpaIwr7dTlJd+Rqw="
+
+storage:
+  endpoint: http://garage:3900
+  access-key: "GKb31da6b5db60b2d3f566e8f7"
+  secret-key: "d33618b7c7922a30373b8051258393fabf6a805fa16caa9c9dd49e4b828513a7"
+  bucket-name: touchfy-uploads
+  bucket-url: http://garage:3900/touchfy-uploads
