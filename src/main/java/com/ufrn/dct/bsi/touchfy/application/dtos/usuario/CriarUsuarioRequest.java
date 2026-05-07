@@ -13,7 +13,7 @@ public record CriarUsuarioRequest(
         @NotBlank(message = "O nome de usuário é obrigatório.")
         String nomeUsuario,
 
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "A senha é obrigatória.")
         String senha,
 
         @NotBlank(message = "A senha é obrigatória.")
