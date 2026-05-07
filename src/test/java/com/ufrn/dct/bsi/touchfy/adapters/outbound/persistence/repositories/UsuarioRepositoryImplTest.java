@@ -7,6 +7,7 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -33,16 +34,7 @@ class UsuarioRepositoryImplTest {
     }
 
     private Usuario criarUsuarioValido() {
-        return new Usuario(
-                UUID.randomUUID(),
-                "Nome",
-                "username",
-                "senha",
-                new Email("teste@email.com"),
-                null,
-                false,
-                new Date()
-        );
+        return new Usuario(UUID.randomUUID(), "Nome", "username", "senha", new Email("teste@email.com"), null, false, new Date());
     }
 
     @Test
@@ -98,56 +90,48 @@ class UsuarioRepositoryImplTest {
         final String nomeUsuario = "usuario_teste";
         final UsuarioEntity entity = new UsuarioEntity();
 
-        when(jpaRepository.findByNomeUsuario(nomeUsuario))
-                .thenReturn(Optional.of(entity));
+        when(jpaRepository.findByNomeUsuario(nomeUsuario)).thenReturn(Optional.of(entity));
 
-        final Optional<UsuarioEntity> resultado =
-                repository.acharPeloNomeDeUsuario(nomeUsuario);
+        final Optional<UsuarioEntity> resultado = repository.acharPeloNomeDeUsuario(nomeUsuario);
 
         assertTrue(resultado.isPresent());
         assertEquals(entity, resultado.get());
 
-        verify(jpaRepository, times(1))
-                .findByNomeUsuario(nomeUsuario);
+        verify(jpaRepository, times(1)).findByNomeUsuario(nomeUsuario);
     }
 
     @Test
     void deveRetornarOptionalVazioQuandoNaoEncontrado() {
         final String nomeUsuario = "inexistente";
 
-        when(jpaRepository.findByNomeUsuario(nomeUsuario))
-                .thenReturn(Optional.empty());
+        when(jpaRepository.findByNomeUsuario(nomeUsuario)).thenReturn(Optional.empty());
 
-        final Optional<UsuarioEntity> resultado =
-                repository.acharPeloNomeDeUsuario(nomeUsuario);
+        final Optional<UsuarioEntity> resultado = repository.acharPeloNomeDeUsuario(nomeUsuario);
 
         assertTrue(resultado.isEmpty());
 
-        verify(jpaRepository, times(1))
-                .findByNomeUsuario(nomeUsuario);
+        verify(jpaRepository, times(1)).findByNomeUsuario(nomeUsuario);
     }
 
     @Test
     void deveDelegarChamadaParaJpaRepository() {
         final String nomeUsuario = "usuario_teste";
 
-        when(jpaRepository.findByNomeUsuario(nomeUsuario))
-                .thenReturn(Optional.empty());
+        when(jpaRepository.findByNomeUsuario(nomeUsuario)).thenReturn(Optional.empty());
 
         repository.acharPeloNomeDeUsuario(nomeUsuario);
 
-        verify(jpaRepository, only())
-                .findByNomeUsuario(nomeUsuario);
+        verify(jpaRepository, only()).findByNomeUsuario(nomeUsuario);
     }
 
     @Test
     void deveAtualizarUsuarioParcialmenteQuandoEncontrado() {
         final var id = UUID.randomUUID();
-        final var request = new AtualizarUsuarioRequest(
-                "Novo Nome",
-                "novo_username",
-                LocalDate.of(2000, 1, 1)
-        );
+        final var request = AtualizarUsuarioRequest.builder()
+                .nome("Novo Nome")
+                .nomeUsuario("novo_username")
+                .dataNascimento(LocalDate.of(2000, 1, 1))
+                .build();
 
         final var entity = new UsuarioEntity();
 
@@ -164,17 +148,16 @@ class UsuarioRepositoryImplTest {
     @Test
     void deveLancarExcecaoQuandoUsuarioNaoEncontradoParaAtualizacao() {
         final var id = UUID.randomUUID();
-        final var request = new AtualizarUsuarioRequest(
-                "Novo Nome",
-                "novo_username",
-                LocalDate.of(2000, 1, 1)
-        );
+        final var request = AtualizarUsuarioRequest.builder()
+                .nome("Novo Nome")
+                .nomeUsuario("novo_username")
+                .dataNascimento(LocalDate.of(2000, 1, 1))
+                .build();
 
         when(jpaRepository.findById(id)).thenReturn(Optional.empty());
 
         final RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> repository.atualizarUsuarioParcialmente(id, request)
+                RuntimeException.class, () -> repository.atualizarUsuarioParcialmente(id, request)
         );
 
         assertEquals("Usuário não encontrado.", exception.getMessage());
@@ -187,11 +170,11 @@ class UsuarioRepositoryImplTest {
     @Test
     void deveChamarMapperAntesDeSalvarNaAtualizacaoParcial() {
         final var id = UUID.randomUUID();
-        final var request = new AtualizarUsuarioRequest(
-                "Novo Nome",
-                "novo_username",
-                LocalDate.of(2000, 1, 1)
-        );
+        final var request = AtualizarUsuarioRequest.builder()
+                .nome("Novo Nome")
+                .nomeUsuario("novo_username")
+                .dataNascimento(LocalDate.of(2000, 1, 1))
+                .build();
 
         final var entity = new UsuarioEntity();
 
@@ -205,5 +188,90 @@ class UsuarioRepositoryImplTest {
         inOrder.verify(jpaRepository).findById(id);
         inOrder.verify(usuarioMapper).updateEntity(request, entity);
         inOrder.verify(jpaRepository).save(entity);
+    }
+
+    @Test
+    @DisplayName("Deve achar usuário pelo id")
+    void deveAcharUsuarioPeloId() {
+        final UUID id = UUID.randomUUID();
+
+        final UsuarioEntity usuarioEntity = UsuarioEntity.builder()
+                .id(id)
+                .nomeUsuario("joao")
+                .build();
+
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(usuarioEntity));
+
+        final Optional<UsuarioEntity> resultado = repository.acharPeloId(id);
+
+        assertTrue(resultado.isPresent());
+
+        assertEquals(id, resultado.get().getId());
+        assertEquals("joao", resultado.get().getNomeUsuario());
+
+        verify(jpaRepository).findById(id);
+    }
+
+    @Test
+    @DisplayName("Deve retornar optional vazio ao buscar usuário inexistente pelo id")
+    void deveRetornarOptionalVazioAoBuscarUsuarioInexistentePeloId() {
+        final UUID id = UUID.randomUUID();
+
+        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        final Optional<UsuarioEntity> resultado = repository.acharPeloId(id);
+
+        assertTrue(resultado.isEmpty());
+
+        verify(jpaRepository).findById(id);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar foto de perfil do usuário")
+    void deveAtualizarFotoPerfilUsuario() {
+        final UsuarioEntity usuarioEntity = UsuarioEntity.builder()
+                .nomeUsuario("maria")
+                .caminhoDaImagemDePerfil(null)
+                .build();
+
+        final String novoCaminho = "usuarios/maria/perfil/foto.png";
+
+        repository.atualizarFotoPerfilUsuario(usuarioEntity, novoCaminho);
+
+        assertEquals(novoCaminho, usuarioEntity.getCaminhoDaImagemDePerfil());
+
+        verify(jpaRepository).save(usuarioEntity);
+    }
+
+    @Test
+    @DisplayName("Deve sobrescrever foto de perfil existente")
+    void deveSobrescreverFotoPerfilExistente() {
+        final UsuarioEntity usuarioEntity = UsuarioEntity.builder()
+                .nomeUsuario("ana")
+                .caminhoDaImagemDePerfil("usuarios/ana/perfil/antiga.png")
+                .build();
+
+        final String novoCaminho = "usuarios/ana/perfil/nova.png";
+
+        repository.atualizarFotoPerfilUsuario(usuarioEntity, novoCaminho);
+
+        assertEquals(novoCaminho, usuarioEntity.getCaminhoDaImagemDePerfil());
+
+        verify(jpaRepository).save(usuarioEntity);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar foto de perfil para null")
+    void deveAtualizarFotoPerfilParaNull() {
+        final UsuarioEntity usuarioEntity = UsuarioEntity.builder()
+                .nomeUsuario("carlos")
+                .caminhoDaImagemDePerfil("usuarios/carlos/perfil/foto.png")
+                .build();
+
+        repository.atualizarFotoPerfilUsuario(usuarioEntity, null);
+
+        assertNull(usuarioEntity.getCaminhoDaImagemDePerfil());
+
+        verify(jpaRepository).save(usuarioEntity);
     }
 }

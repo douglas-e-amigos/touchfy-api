@@ -2,9 +2,11 @@ package com.ufrn.dct.bsi.touchfy.application.dtos.usuario;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record AtualizarUsuarioRequest(
         @NotBlank(message = "O nome é obrigatório.")
         String nome,

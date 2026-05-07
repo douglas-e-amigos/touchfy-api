@@ -6,7 +6,7 @@ public record AutenticarUsuarioRequest(
         @NotBlank(message = "O nome de usuário é obrigatório.")
         String nomeUsuario,
 
-        @NotBlank(message = "A senha é obrigatória")
+        @NotBlank(message = "A senha é obrigatória.")
         String senha
 ) {
 }

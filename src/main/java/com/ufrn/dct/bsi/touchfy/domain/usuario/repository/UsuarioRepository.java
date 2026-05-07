@@ -12,5 +12,9 @@ public interface UsuarioRepository {
 
     Optional<UsuarioEntity> acharPeloNomeDeUsuario(final String nomeUsuario);
 
+    Optional<UsuarioEntity> acharPeloId(final UUID id);
+
     void atualizarUsuarioParcialmente(final UUID id, final AtualizarUsuarioRequest request);
+
+    void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil);
 }
