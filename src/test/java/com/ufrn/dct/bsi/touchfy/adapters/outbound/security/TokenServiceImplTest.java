@@ -40,7 +40,7 @@ class TokenServiceImplTest {
         final String token = tokenService.generateToken(usuario);
         final String subject = tokenService.getSubject(token);
 
-        assertEquals(id.toString(), subject);
+        assertEquals(usuario.getNomeUsuario(), subject);
     }
 
     @Test
