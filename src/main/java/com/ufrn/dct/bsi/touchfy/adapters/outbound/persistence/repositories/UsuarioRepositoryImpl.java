@@ -32,10 +32,21 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     }
 
     @Override
+    public Optional<UsuarioEntity> acharPeloId(final UUID id) {
+        return jpaRepository.findById(id);
+    }
+
+    @Override
     public void atualizarUsuarioParcialmente(final UUID id, final AtualizarUsuarioRequest request) {
-        final var usuarioEntity = jpaRepository.findById(id)
+        final var usuarioEntity = this.acharPeloId(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
         usuarioMapper.updateEntity(request, usuarioEntity);
+        jpaRepository.save(usuarioEntity);
+    }
+
+    @Override
+    public void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil) {
+        usuarioEntity.setCaminhoDaImagemDePerfil(pathFotoPerfil);
         jpaRepository.save(usuarioEntity);
     }
 }
