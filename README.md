@@ -20,6 +20,21 @@ docker down -v
 
 Feito isso, rode o comando de start novamente.
 
+### PgAdmin
+
+A aplicação possui um cliente web para o banco de dados, que pode ser acessado no endpoint:
+
+````
+http://localhost:5050
+````
+
+As credenciais são:
+
+````
+Email: admin@touchfy.com
+Senha: 123456
+````
+
 ## Testes
 
 Os testes unitários podem ser rodados com o comando abaixo:

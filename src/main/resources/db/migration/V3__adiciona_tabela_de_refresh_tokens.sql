@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS refresh_token(
+    id UUID PRIMARY KEY,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    expiracao TIMESTAMP NOT NULL,
+    revogado BOOLEAN NOT NULL DEFAULT FALSE,
+    usuario_id UUID NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+);
