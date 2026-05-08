@@ -25,8 +25,12 @@ logging:
     org.flywaydb: DEBUG
 
 jwt:
-  secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
-  expiration: 86400000
+  access:
+    secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
+    expiration: 300000 # 5 minutos em milisegundos
+  refresh:
+    secret: "iVjLEy6quSta/OyWe1CmhKnuqU8zEV+X7eLr/OhMenI="
+    expiration: 604800000 # 7 dias em milisegundos
 
 garage:
   admin:
