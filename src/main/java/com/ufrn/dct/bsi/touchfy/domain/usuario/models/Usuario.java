@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -21,7 +21,7 @@ public class Usuario {
     private Email email;
     private Imagem imagem;
     private Boolean emailVerificado;
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
 
     public Usuario(
             final UUID id,
@@ -31,7 +31,7 @@ public class Usuario {
             final Email email,
             final Imagem imagem,
             final Boolean emailVerificado,
-            final Date dataNascimento
+            final LocalDate dataNascimento
     ) {
         if (nome == null) {
             throw new IllegalArgumentException("Nome é obrigatório");

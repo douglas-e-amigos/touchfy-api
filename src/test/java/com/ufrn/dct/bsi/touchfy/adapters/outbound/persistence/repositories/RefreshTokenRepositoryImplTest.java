@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -133,7 +133,7 @@ class RefreshTokenRepositoryImplTest {
                 new Email("teste@email.com"),
                 null,
                 true,
-                new Date()
+                LocalDate.now()
         );
     }
 

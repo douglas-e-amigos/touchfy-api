@@ -43,7 +43,7 @@ class CriarUsuarioUseCaseTest {
                 new Email("teste@email.com"),
                 null,
                 false,
-                new Date()
+                LocalDate.now()
         );
     }
 
