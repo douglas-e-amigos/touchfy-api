@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,7 +53,7 @@ class AutenticarUsuarioUseCaseTest {
                 .nomeUsuario("usuario_teste")
                 .senha("senha_hash")
                 .email(new Email("teste@email.com"))
-                .dataNascimento(new Date())
+                .dataNascimento(LocalDate.now())
                 .build();
     }
 

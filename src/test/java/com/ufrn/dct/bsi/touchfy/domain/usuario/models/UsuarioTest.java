@@ -3,7 +3,7 @@ package com.ufrn.dct.bsi.touchfy.domain.usuario.models;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,8 +15,8 @@ class UsuarioTest {
         return new Email("teste@email.com");
     }
 
-    private Date dataValida() {
-        return new Date();
+    private LocalDate dataValida() {
+        return LocalDate.now();
     }
 
     @Test
