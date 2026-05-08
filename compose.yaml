@@ -33,7 +33,7 @@ services:
       - "3902:3902"
       - "3903:3903"
     volumes:
-      - ./garage.toml:/etc/garage.toml
+      - ./garage/garage.toml:/etc/garage.toml
       - garage-meta:/var/lib/garage/meta
       - garage-data:/var/lib/garage/data
 
@@ -44,9 +44,10 @@ services:
     ports:
       - "3909:3909"
     volumes:
-      - ./garage.toml:/etc/garage.toml:ro
+      - ./garage/garage.toml:/etc/garage.toml:ro
     environment:
       - API_BASE_URL=http://garage:3903
+      - ADMIN_TOKEN=0qYrJTwNxc+JO/yWuIRZA8G6Hr0HpaIwr7dTlJd+Rqw=
       - S3_ENDPOINT_URL=http://garage:3900
     depends_on:
       - garage
