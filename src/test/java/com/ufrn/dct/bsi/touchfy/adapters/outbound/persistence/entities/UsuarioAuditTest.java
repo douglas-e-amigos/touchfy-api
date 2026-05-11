@@ -145,9 +145,10 @@ public class UsuarioAuditTest {
         UsuarioEntity salvo = usuarioRepository.salvar(usuario);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
-
+        
         usuarioRepository.deletar(usuarioId);
         entityManager.flush();
+        entityManager.clear();
 
         Optional<UsuarioEntity> encontrado = usuarioRepository.acharPeloId(usuarioId);
 
