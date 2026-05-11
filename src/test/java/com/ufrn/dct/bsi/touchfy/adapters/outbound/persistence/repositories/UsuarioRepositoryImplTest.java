@@ -5,6 +5,7 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
+import org.springframework.data.domain.AuditorAware;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,7 @@ class UsuarioRepositoryImplTest {
 
     private UsuarioJpaRepository jpaRepository;
     private UsuarioMapper usuarioMapper;
+    private AuditorAware<UUID> auditorAware;
 
     private UsuarioRepositoryImpl repository;
 
@@ -28,8 +30,9 @@ class UsuarioRepositoryImplTest {
     void setUp() {
         jpaRepository = mock(UsuarioJpaRepository.class);
         usuarioMapper = mock(UsuarioMapper.class);
+        auditorAware = mock(AuditorAware.class);
 
-        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper);
+        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper, auditorAware);
     }
 
     private Usuario criarUsuarioValido() {

@@ -3,18 +3,22 @@ package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
+@SQLRestriction("ativo = true")
 @Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Getter
 @Setter
-public class UsuarioEntity {
+public class UsuarioEntity extends AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
