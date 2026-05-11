@@ -8,7 +8,10 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
+@SQLRestriction("ativo = true")
 @Table(name = "usuario")
 @AllArgsConstructor
 @NoArgsConstructor
