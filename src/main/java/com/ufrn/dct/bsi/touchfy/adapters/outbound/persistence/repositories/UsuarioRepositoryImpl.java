@@ -36,7 +36,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Override
     public Optional<UsuarioEntity> acharPeloId(final UUID id) {
-        return jpaRepository.findByIdAndAtivoTrue(id);
+        return jpaRepository.findById(id);
     }
 
     @Override
