@@ -9,6 +9,8 @@ import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.AuditorAware;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class UsuarioRepositoryImpl implements UsuarioRepository {
     private final UsuarioJpaRepository jpaRepository;
     private final UsuarioMapper usuarioMapper;
+    private final AuditorAware<java.util.UUID> auditorAware;
 
     @Override
     public UsuarioEntity salvar(final Usuario usuario) {
@@ -33,7 +36,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Override
     public Optional<UsuarioEntity> acharPeloId(final UUID id) {
-        return jpaRepository.findById(id);
+        return jpaRepository.findByIdAndAtivoTrue(id);
     }
 
     @Override
@@ -48,5 +51,21 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     public void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil) {
         usuarioEntity.setCaminhoDaImagemDePerfil(pathFotoPerfil);
         jpaRepository.save(usuarioEntity);
+    }
+
+    @Override
+    public Optional<Usuario> buscarPorNomeUsuario(final String nomeUsuario) {
+        return jpaRepository.findByNomeUsuario(nomeUsuario)
+                .map(usuarioMapper::toDomain);
+    }
+
+    @Override
+    public void deletar(final UUID id) {
+        jpaRepository.findById(id).ifPresent(entity -> {
+            entity.setAtivo(false);
+            entity.setDeletadoEm(LocalDateTime.now());
+            auditorAware.getCurrentAuditor().ifPresent(entity::setDeletadoPor);
+            jpaRepository.save(entity);
+        });
     }
 }

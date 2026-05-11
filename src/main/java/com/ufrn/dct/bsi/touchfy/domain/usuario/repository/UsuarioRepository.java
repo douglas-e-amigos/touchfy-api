@@ -17,4 +17,8 @@ public interface UsuarioRepository {
     void atualizarUsuarioParcialmente(final UUID id, final AtualizarUsuarioRequest request);
 
     void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil);
+
+    Optional<Usuario> buscarPorNomeUsuario(final String nomeUsuario);
+
+    void deletar(UUID id);
 }
