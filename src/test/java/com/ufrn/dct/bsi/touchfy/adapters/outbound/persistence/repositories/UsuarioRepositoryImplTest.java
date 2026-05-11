@@ -5,6 +5,7 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
+import org.springframework.data.domain.AuditorAware;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,7 @@ class UsuarioRepositoryImplTest {
 
     private UsuarioJpaRepository jpaRepository;
     private UsuarioMapper usuarioMapper;
+    private AuditorAware<UUID> auditorAware;
 
     private UsuarioRepositoryImpl repository;
 
@@ -28,8 +30,9 @@ class UsuarioRepositoryImplTest {
     void setUp() {
         jpaRepository = mock(UsuarioJpaRepository.class);
         usuarioMapper = mock(UsuarioMapper.class);
+        auditorAware = mock(AuditorAware.class);
 
-        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper);
+        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper, auditorAware);
     }
 
     private Usuario criarUsuarioValido() {
@@ -134,12 +137,12 @@ class UsuarioRepositoryImplTest {
 
         final var entity = new UsuarioEntity();
 
-        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.findByIdAndAtivoTrue(id)).thenReturn(Optional.of(entity));
         when(jpaRepository.save(entity)).thenReturn(entity);
 
         repository.atualizarUsuarioParcialmente(id, request);
 
-        verify(jpaRepository).findById(id);
+        verify(jpaRepository).findByIdAndAtivoTrue(id);
         verify(usuarioMapper).updateEntity(request, entity);
         verify(jpaRepository).save(entity);
     }
@@ -153,7 +156,7 @@ class UsuarioRepositoryImplTest {
                 .dataNascimento(LocalDate.of(2000, 1, 1))
                 .build();
 
-        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+        when(jpaRepository.findByIdAndAtivoTrue(id)).thenReturn(Optional.empty());
 
         final RuntimeException exception = assertThrows(
                 RuntimeException.class, () -> repository.atualizarUsuarioParcialmente(id, request)
@@ -161,7 +164,7 @@ class UsuarioRepositoryImplTest {
 
         assertEquals("Usuário não encontrado.", exception.getMessage());
 
-        verify(jpaRepository).findById(id);
+        verify(jpaRepository).findByIdAndAtivoTrue(id);
         verifyNoInteractions(usuarioMapper);
         verify(jpaRepository, never()).save(any());
     }
@@ -177,14 +180,14 @@ class UsuarioRepositoryImplTest {
 
         final var entity = new UsuarioEntity();
 
-        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.findByIdAndAtivoTrue(id)).thenReturn(Optional.of(entity));
         when(jpaRepository.save(entity)).thenReturn(entity);
 
         repository.atualizarUsuarioParcialmente(id, request);
 
         final var inOrder = inOrder(jpaRepository, usuarioMapper);
 
-        inOrder.verify(jpaRepository).findById(id);
+        inOrder.verify(jpaRepository).findByIdAndAtivoTrue(id);
         inOrder.verify(usuarioMapper).updateEntity(request, entity);
         inOrder.verify(jpaRepository).save(entity);
     }
@@ -199,7 +202,7 @@ class UsuarioRepositoryImplTest {
                 .nomeUsuario("joao")
                 .build();
 
-        when(jpaRepository.findById(id)).thenReturn(Optional.of(usuarioEntity));
+        when(jpaRepository.findByIdAndAtivoTrue(id)).thenReturn(Optional.of(usuarioEntity));
 
         final Optional<UsuarioEntity> resultado = repository.acharPeloId(id);
 
@@ -208,7 +211,7 @@ class UsuarioRepositoryImplTest {
         assertEquals(id, resultado.get().getId());
         assertEquals("joao", resultado.get().getNomeUsuario());
 
-        verify(jpaRepository).findById(id);
+        verify(jpaRepository).findByIdAndAtivoTrue(id);
     }
 
     @Test
@@ -216,13 +219,13 @@ class UsuarioRepositoryImplTest {
     void deveRetornarOptionalVazioAoBuscarUsuarioInexistentePeloId() {
         final UUID id = UUID.randomUUID();
 
-        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+        when(jpaRepository.findByIdAndAtivoTrue(id)).thenReturn(Optional.empty());
 
         final Optional<UsuarioEntity> resultado = repository.acharPeloId(id);
 
         assertTrue(resultado.isEmpty());
 
-        verify(jpaRepository).findById(id);
+        verify(jpaRepository).findByIdAndAtivoTrue(id);
     }
 
     @Test
