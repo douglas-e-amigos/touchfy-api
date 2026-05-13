@@ -16,6 +16,41 @@
         <java.version>25</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <aws.sdk.version>2.44.1</aws.sdk.version>
+        <!-- SonarQube Properties -->
+        <sonar.host.url>http://labens.dct.ufrn.br/sonarqube</sonar.host.url>
+        <sonar.projectKey>touchfyKey</sonar.projectKey>
+        <sonar.projectName>Touchfy - API de Streaming</sonar.projectName>
+        <sonar.projectVersion>0.1.0</sonar.projectVersion>
+        <!-- JaCoCo Properties -->
+        <jacoco.version>0.8.14</jacoco.version>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!-- Token from environment variable -->
+        <sonar.token>${env.SONAR_TOKEN}</sonar.token>
+        <sonar.maven.plugin.version>3.11.0.3922</sonar.maven.plugin.version>
+        <!-- Excluir arquivos apenas do cálculo de cobertura -->
+        <sonar.coverage.exclusions>
+            **/dtos/**,
+            **/*DTO.java,
+            **/entities/**,
+            **/*Entity.java,
+            **/config/**,
+            **/*Configuration.java,
+            **/*Config.java,
+            **/*Properties.java,
+            **/*Exception.java,
+            **/*Request.java,
+            **/*Response.java,
+            **/*Mapper.java,
+            **/*MapperImpl.java,
+            **/controllers/**,
+            **/*Controller.java,
+            **/routes/**,
+            **/*Route.java
+        </sonar.coverage.exclusions>
+        <!-- Excluir completamente da análise do SonarQube -->
+        <sonar.exclusions>
+            target/**
+        </sonar.exclusions>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -184,6 +219,31 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.maven.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
