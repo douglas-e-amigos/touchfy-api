@@ -3,6 +3,7 @@ package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.UsuarioResponse;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 
 import org.mapstruct.*;
@@ -22,4 +23,7 @@ public interface UsuarioMapper {
     @Mapping(source = "email", target = "email", qualifiedByName = "mapValueToEmail")
     Usuario toDomain(CriarUsuarioRequest request);
 
+    @Mapping(source = "email", target = "email", qualifiedByName = "mapEmailToValue")
+    @Mapping(source = "imagem", target = "fotoPerfil", qualifiedByName = "mapImageToPath")
+    UsuarioResponse toResponse(Usuario usuario);
 }
