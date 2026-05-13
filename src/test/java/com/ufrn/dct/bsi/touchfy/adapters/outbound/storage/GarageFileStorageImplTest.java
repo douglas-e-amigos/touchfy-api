@@ -1,17 +1,30 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.storage;
 
-import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.springframework.mock.web.MockMultipartFile;
+
+import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoRecuperadoResponse;
+
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class GarageFileStorageImplTest {
 
@@ -80,6 +93,26 @@ class GarageFileStorageImplTest {
     }
 
     @Test
+    void deveBuscarArquivoERetornarConteudo() {
+        final String caminho = "perfil/uuid.png";
+        final byte[] conteudo = "conteudo".getBytes();
+        final GetObjectResponse getObjectResponse = GetObjectResponse.builder()
+                .contentType("image/png")
+                .build();
+
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class)))
+                .thenReturn(ResponseBytes.fromByteArray(getObjectResponse, conteudo));
+
+        final ArquivoRecuperadoResponse response = storage.retrieve(caminho);
+
+        assertNotNull(response);
+        assertEquals("uuid.png", response.nome());
+        assertEquals(caminho, response.caminhoDoArquivo());
+        assertEquals("image/png", response.contentType());
+        assertArrayEquals(conteudo, response.conteudo());
+    }
+
+    @Test
     void deveLancarExcecaoQuandoFalhaNoUpload() {
         final MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -93,5 +126,14 @@ class GarageFileStorageImplTest {
 
         assertThrows(RuntimeException.class,
                 () -> storage.store(file, "perfil"));
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoFalhaNaBusca() {
+        when(s3Client.getObjectAsBytes(any(GetObjectRequest.class)))
+                .thenThrow(RuntimeException.class);
+
+        assertThrows(RuntimeException.class,
+                () -> storage.retrieve("perfil/uuid.png"));
     }
 }

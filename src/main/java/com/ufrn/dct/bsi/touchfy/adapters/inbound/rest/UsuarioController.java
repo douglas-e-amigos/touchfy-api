@@ -1,26 +1,44 @@
 package com.ufrn.dct.bsi.touchfy.adapters.inbound.rest;
 
-import com.ufrn.dct.bsi.touchfy.adapters.inbound.rest.routes.UsuarioRoute;
-
-import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.*;
-
-import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.*;
-
-import com.ufrn.dct.bsi.touchfy.shared.dtos.NovoRecursoResponse;
-
-import com.ufrn.dct.bsi.touchfy.shared.dtos.RecursoAtualizadoResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
-
-import lombok.AllArgsConstructor;
+import java.time.LocalDate;
+import java.util.UUID;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.*;
+import com.ufrn.dct.bsi.touchfy.adapters.inbound.rest.routes.UsuarioRoute;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarFotoPerfilUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AutenticarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.RefreshTokenRequest;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.TokenResponse;
+import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.UsuarioResponse;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.AtualizarFotoPerfilUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.AtualizarUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.AutenticarUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.BuscarUsuarioLogadoUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.BuscarUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.CriarUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.DesativarUsuarioUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.LogoutUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.usuario.RefreshTokenUseCase;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.NovoRecursoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.RecursoAtualizadoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.RecursoDeletadoResponse;
 
-import java.time.LocalDate;
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping(UsuarioRoute.ROOT)
@@ -29,7 +47,10 @@ public class UsuarioController {
     private final AtualizarFotoPerfilUsuarioUseCase atualizarFotoPerfilUsuarioUseCase;
     private final AtualizarUsuarioUseCase atualizarUsuarioUseCase;
     private final AutenticarUsuarioUseCase autenticarUsuarioUseCase;
+    private final BuscarUsuarioUseCase buscarUsuarioUseCase;
     private final CriarUsuarioUseCase criarUsuarioUseCase;
+    private final BuscarUsuarioLogadoUseCase buscarUsuarioLogadoUseCase;
+    private final DesativarUsuarioUseCase desativarUsuarioUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final LogoutUseCase logoutUseCase;
 
@@ -94,5 +115,32 @@ public class UsuarioController {
     public ResponseEntity<Void> logout(@RequestBody @Valid final RefreshTokenRequest request) {
         logoutUseCase.execute(request.refreshToken());
         return ResponseEntity.noContent().build();
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(UsuarioRoute.ME)
+    public ResponseEntity<UsuarioResponse> buscarUsuarioLogado() {
+        final var usuario = buscarUsuarioLogadoUseCase.execute();
+        return ResponseEntity.ok(usuario);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(UsuarioRoute.BUSCAR)
+    public ResponseEntity<RecursoDeletadoResponse> desativar(@PathVariable("id") final UUID id) {
+        desativarUsuarioUseCase.execute(id);
+
+        return ResponseEntity.ok(new RecursoDeletadoResponse(
+            "Usuário desativado com sucesso!",
+            Boolean.TRUE,
+            LocalDate.now()
+        )
+        );
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping(value = UsuarioRoute.BUSCAR)
+    public ResponseEntity<UsuarioResponse> buscar(@PathVariable("id") final UUID id) {
+        final var usuario = buscarUsuarioUseCase.execute(id);
+        return ResponseEntity.ok(usuario);
     }
 }

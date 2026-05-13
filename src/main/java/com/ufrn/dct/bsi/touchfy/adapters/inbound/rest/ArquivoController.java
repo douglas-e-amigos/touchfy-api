@@ -1,14 +1,25 @@
 package com.ufrn.dct.bsi.touchfy.adapters.inbound.rest;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.BuscarArquivoUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.DeletarArquivoUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.UploadArquivoUseCase;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoRecuperadoResponse;
+
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/arquivos")
@@ -16,8 +27,22 @@ import org.springframework.web.multipart.MultipartFile;
 @SecurityRequirement(name = "bearerAuth")
 public class ArquivoController {
 
+    private final BuscarArquivoUseCase buscarArquivoUseCase;
     private final UploadArquivoUseCase uploadArquivoUseCase;
     private final DeletarArquivoUseCase deletarArquivoUseCase;
+
+    @GetMapping
+    public ResponseEntity<byte[]> buscar(@RequestParam("caminho") final String caminho) {
+                final ArquivoRecuperadoResponse arquivo = buscarArquivoUseCase.execute(caminho);
+        final MediaType mediaType = arquivo.contentType() == null
+                ? MediaType.APPLICATION_OCTET_STREAM
+                : MediaType.parseMediaType(arquivo.contentType());
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header("Content-Disposition", "inline; filename=\"" + arquivo.nome() + "\"")
+                .body(arquivo.conteudo());
+    }
 
     @PostMapping(
             value = "/upload/{subDirectory}",
