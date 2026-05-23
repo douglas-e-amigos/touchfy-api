@@ -130,10 +130,10 @@ public class UsuarioController {
         desativarUsuarioUseCase.execute(id);
 
         return ResponseEntity.ok(new RecursoDeletadoResponse(
-            "Usuário desativado com sucesso!",
-            Boolean.TRUE,
-            LocalDate.now()
-        )
+                        "Usuário desativado com sucesso!",
+                        Boolean.TRUE,
+                        LocalDate.now()
+                )
         );
     }
 
