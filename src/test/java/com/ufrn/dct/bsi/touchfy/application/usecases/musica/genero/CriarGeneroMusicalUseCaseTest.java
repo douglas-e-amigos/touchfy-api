@@ -27,7 +27,7 @@ class CriarGeneroMusicalUseCaseTest {
     void deveLancarExcecaoQuandoRequestForInvalido() {
         final GeneroMusicalRepository repository = mock(GeneroMusicalRepository.class);
         final CriarGeneroMusicalUseCase useCase = new CriarGeneroMusicalUseCase(repository);
-        final CriarGeneroMusicalRequest request = new CriarGeneroMusicalRequest("curto");
+        final CriarGeneroMusicalRequest request = new CriarGeneroMusicalRequest("t");
 
         final var exception = assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
 
