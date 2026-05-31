@@ -6,7 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum DiretorioStorage {
-    FOTOS_DE_PERFIL("usuarios/%s/perfil");
+    FOTOS_DE_PERFIL("usuarios/%s/perfil"),
+    MUSICAS("musicas/%s");
 
     private final String diretorio;
 }
