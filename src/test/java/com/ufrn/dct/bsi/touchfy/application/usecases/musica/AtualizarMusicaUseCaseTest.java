@@ -1,0 +1,120 @@
+package com.ufrn.dct.bsi.touchfy.application.usecases.musica;
+
+import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.AtualizarMusicaRequest;
+import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.DeletarArquivoUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.UploadArquivoUseCase;
+import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
+import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
+import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class AtualizarMusicaUseCaseTest {
+
+    @Test
+    void deveAtualizarArquivoQuandoNovoMp3ForInformado() {
+        final MusicaRepository repository = mock(MusicaRepository.class);
+        final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+        final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
+                repository,
+                uploadArquivoUseCase,
+                deletarArquivoUseCase
+        );
+        final UUID id = UUID.randomUUID();
+        final MockMultipartFile arquivo = new MockMultipartFile(
+                "arquivo",
+                "tempo-perdido.mp3",
+                "audio/mpeg",
+                "conteudo".getBytes()
+        );
+        final AtualizarMusicaRequest request = new AtualizarMusicaRequest(
+                "Tempo Perdido",
+                "Nova letra",
+                List.of(UUID.randomUUID()),
+                List.of(UUID.randomUUID()),
+                arquivo
+        );
+        final Musica musica = Musica.builder()
+                .id(id)
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/antiga/tempo-perdido.mp3")
+                .build();
+        final ArquivoArmazenamentoResponse response = new ArquivoArmazenamentoResponse(
+                "tempo-perdido.mp3",
+                "musicas/" + id + "/tempo-perdido.mp3",
+                "mp3",
+                8.0
+        );
+
+        when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+        when(uploadArquivoUseCase.execute(arquivo, "musicas/" + id)).thenReturn(response);
+
+        useCase.execute(id, request);
+
+        verify(deletarArquivoUseCase, times(1)).execute("musicas/antiga/tempo-perdido.mp3");
+        verify(uploadArquivoUseCase, times(1)).execute(arquivo, "musicas/" + id);
+        verify(repository, times(1)).atualizar(id, request, "musicas/" + id + "/tempo-perdido.mp3");
+    }
+
+    @Test
+    void deveAtualizarSemNovoArquivoQuandoArquivoNaoForInformado() {
+        final MusicaRepository repository = mock(MusicaRepository.class);
+        final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+        final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
+                repository,
+                uploadArquivoUseCase,
+                deletarArquivoUseCase
+        );
+        final UUID id = UUID.randomUUID();
+        final AtualizarMusicaRequest request = new AtualizarMusicaRequest(
+                "Tempo Perdido",
+                null,
+                null,
+                null,
+                null
+        );
+        final Musica musica = Musica.builder()
+                .id(id)
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/antiga/tempo-perdido.mp3")
+                .build();
+
+        when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+        useCase.execute(id, request);
+
+        verify(deletarArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.anyString());
+        verify(uploadArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyString());
+        verify(repository, times(1)).atualizar(id, request, null);
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoIdForNulo() {
+        final MusicaRepository repository = mock(MusicaRepository.class);
+        final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+        final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
+                repository,
+                uploadArquivoUseCase,
+                deletarArquivoUseCase
+        );
+
+        final var exception = assertThrows(IllegalArgumentException.class, () -> useCase.execute(null, null));
+
+        assertEquals("Os dados da música são obrigatórios.", exception.getMessage());
+    }
+}

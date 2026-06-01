@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SuperBuilder
 @Getter
 @Setter
-public class UsuarioEntity extends AuditableEntity{
+public class UsuarioEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
