@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +37,7 @@ class UsuarioRepositoryImplTest {
     }
 
     private Usuario criarUsuarioValido() {
-        return new Usuario(UUID.randomUUID(), "Nome", "username", "senha", new Email("teste@email.com"), null, false, LocalDate.now());
+        return new Usuario(UUID.randomUUID(), "Nome", "username", "senha", new Email("teste@email.com"), null, false, LocalDate.now(), Set.of());
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,8 @@ class UsuarioTest {
                 emailValido(),
                 null,
                 false,
-                dataValida()
+                dataValida(),
+                Set.of()
         );
 
         assertEquals("Nome", usuario.getNome());
@@ -41,35 +43,35 @@ class UsuarioTest {
     @Test
     void deveLancarErroQuandoNomeForNulo() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Usuario(null, null, "user", "senha", emailValido(), null, false, dataValida())
+                new Usuario(null, null, "user", "senha", emailValido(), null, false, dataValida(), Set.of())
         );
     }
 
     @Test
     void deveLancarErroQuandoNomeUsuarioForNulo() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Usuario(null, "Nome", null, "senha", emailValido(), null, false, dataValida())
+                new Usuario(null, "Nome", null, "senha", emailValido(), null, false, dataValida(), Set.of())
         );
     }
 
     @Test
     void deveLancarErroQuandoSenhaForNula() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Usuario(null, "Nome", "user", null, emailValido(), null, false, dataValida())
+                new Usuario(null, "Nome", "user", null, emailValido(), null, false, dataValida(),  Set.of())
         );
     }
 
     @Test
     void deveLancarErroQuandoEmailForNulo() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Usuario(null, "Nome", "user", "senha", null, null, false, dataValida())
+                new Usuario(null, "Nome", "user", "senha", null, null, false, dataValida(),  Set.of())
         );
     }
 
     @Test
     void deveLancarErroQuandoDataNascimentoForNula() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Usuario(null, "Nome", "user", "senha", emailValido(), null, false, null)
+                new Usuario(null, "Nome", "user", "senha", emailValido(), null, false, null, Set.of())
         );
     }
 }

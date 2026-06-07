@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +44,8 @@ class CriarUsuarioUseCaseTest {
                 new Email("teste@email.com"),
                 null,
                 false,
-                LocalDate.now()
+                LocalDate.now(),
+                Set.of()
         );
     }
 

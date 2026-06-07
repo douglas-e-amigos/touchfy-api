@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,6 +137,6 @@ class TokenServiceImplTest {
         final String username = String.format("user-%d", random.nextInt());
 
         return new Usuario(id != null ? id : UUID.randomUUID(), "Usuário", username, "minhasenha",
-                new Email(String.format("%s@test.com", username)), null, Boolean.TRUE, LocalDate.now());
+                new Email(String.format("%s@test.com", username)), null, Boolean.TRUE, LocalDate.now(), Set.of());
     }
 }
