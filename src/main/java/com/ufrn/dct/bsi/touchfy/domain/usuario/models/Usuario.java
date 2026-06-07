@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.domain.usuario.models;
 
+import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import com.ufrn.dct.bsi.touchfy.shared.models.Imagem;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -22,6 +24,7 @@ public class Usuario {
     private Imagem imagem;
     private Boolean emailVerificado;
     private LocalDate dataNascimento;
+    private Set<Role> roles;
 
     public Usuario(
             final UUID id,
@@ -31,7 +34,8 @@ public class Usuario {
             final Email email,
             final Imagem imagem,
             final Boolean emailVerificado,
-            final LocalDate dataNascimento
+            final LocalDate dataNascimento,
+            final Set<Role> roles
     ) {
         if (nome == null) {
             throw new IllegalArgumentException("Nome é obrigatório");
@@ -57,5 +61,6 @@ public class Usuario {
         this.imagem = imagem;
         this.emailVerificado = emailVerificado;
         this.dataNascimento = dataNascimento;
+        this.roles = roles;
     }
 }
