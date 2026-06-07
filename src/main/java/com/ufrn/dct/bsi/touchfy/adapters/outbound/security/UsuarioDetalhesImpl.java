@@ -4,11 +4,10 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEn
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Builder
@@ -22,7 +21,18 @@ public class UsuarioDetalhesImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        final Set<GrantedAuthority> authorities = new HashSet<>();
+        if (usuario.getRoles() != null) {
+            for (var role : usuario.getRoles()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().name()));
+                if (role.getPermissions() != null) {
+                    for (var permission : role.getPermissions()) {
+                        authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                    }
+                }
+            }
+        }
+        return authorities;
     }
 
     @Override
