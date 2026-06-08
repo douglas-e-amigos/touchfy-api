@@ -16,6 +16,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -59,7 +60,7 @@ public class UsuarioAuditTest {
     @WithMockUser("sistema")
     void DevePreencherCamposDeCriacaoUsuarioAudit() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
 
         assertThat(salvo.getCriadoPor()).isNotNull();
@@ -73,7 +74,7 @@ public class UsuarioAuditTest {
     @WithMockUser("sistema")
     void DevePreencherCamposDeAlteracaoUsuarioAudit() throws InterruptedException {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
 
         LocalDateTime dataCriacao = salvo.getCriadoEm();
@@ -104,7 +105,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void DeveFazerSoftDeleteComAuditoriaCompleta() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
 
@@ -124,7 +125,7 @@ public class UsuarioAuditTest {
     @Test
     void DeveFazerSoftDeleteSemUsuarioAutenticado() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
 
@@ -142,7 +143,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void NaoDeveretornarUsuarioDeletado() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
         
@@ -160,7 +161,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void DevePreencherTimestampDeDeletacao() throws InterruptedException {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
         LocalDateTime antes = LocalDateTime.now();
