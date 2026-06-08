@@ -52,4 +52,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     public boolean existePorId(final Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public boolean existePorNome(final String nome) { return jpaRepository.existsByName(nome); }
 }

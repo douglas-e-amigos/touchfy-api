@@ -11,4 +11,5 @@ public interface PermissionRepository {
     Permission atualizar(Permission permission);
     void excluir(Long id);
     boolean existePorId(Long id);
+    boolean existePorNome(String nome);
 }
