@@ -5,11 +5,14 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.EmailMappe
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.ImagemMapperImpl;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapperImpl;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.UsuarioRepositoryImpl;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.config.AuditTestConfig;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -45,6 +48,18 @@ public class UsuarioAuditTest {
 
     @Autowired
     private TestEntityManager entityManager;
+
+    @Autowired
+    private RoleJpaRepository roleJpaRepository;
+
+    @BeforeEach
+    void setup() {
+        if (!roleJpaRepository.existsByName(ERole.OUVINTE)) {
+            RoleEntity role = new RoleEntity();
+            role.setName(ERole.OUVINTE);
+            roleJpaRepository.save(role);
+        }
+    }
 
     private Usuario criarUsuarioExemplo() {
         return Usuario.builder()

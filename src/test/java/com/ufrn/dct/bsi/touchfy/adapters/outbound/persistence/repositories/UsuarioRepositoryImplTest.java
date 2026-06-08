@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories;
 
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.RoleEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
@@ -53,6 +54,12 @@ class UsuarioRepositoryImplTest {
         when(usuarioMapper.toEntity(usuario)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(entity);
 
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
+
         UsuarioEntity resultado = repository.salvar(usuario, ERole.OUVINTE);
 
         assertNotNull(resultado);
@@ -72,6 +79,12 @@ class UsuarioRepositoryImplTest {
         when(usuarioMapper.toEntity(usuario)).thenReturn(entityEntrada);
         when(jpaRepository.save(entityEntrada)).thenReturn(entitySalva);
 
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
+
         UsuarioEntity resultado = repository.salvar(usuario, ERole.OUVINTE);
 
         assertEquals(entitySalva, resultado);
@@ -84,6 +97,12 @@ class UsuarioRepositoryImplTest {
 
         when(usuarioMapper.toEntity(usuario)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(entity);
+
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
 
         repository.salvar(usuario, ERole.OUVINTE);
 
