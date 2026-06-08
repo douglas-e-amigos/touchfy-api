@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
+
 public record CriarUsuarioRequest(
         @NotBlank(message = "O nome é obrigatório.")
         String nome,
@@ -24,6 +26,9 @@ public record CriarUsuarioRequest(
         String email,
 
         @NotNull(message = "A data de nascimento é obrigatória.")
-        LocalDate dataNascimento
+        LocalDate dataNascimento,
+
+        @NotNull(message = "O Role é obrigatório")
+        ERole role
 ) {
 }
