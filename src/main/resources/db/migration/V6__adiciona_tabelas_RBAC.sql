@@ -24,38 +24,3 @@ CREATE TABLE user_roles (
     PRIMARY KEY (user_id, role_id)
 );
 
--- ──────────────────────────────────────────────
--- Dados iniciais
--- ──────────────────────────────────────────────
-
-INSERT INTO permissions (name) VALUES
-    ('music:read'),
-    ('music:create'),
-    ('user:delete');
-
-INSERT INTO roles (name) VALUES
-    ('OUVINTE'),
-    ('ARTISTA'),
-    ('MODERADOR'),
-    ('ADMIN');
-
--- OUVINTE → music:read
-INSERT INTO roles_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r, permissions p
-WHERE r.name = 'OUVINTE' AND p.name = 'music:read';
-
--- ARTISTA → music:read, music:create
-INSERT INTO roles_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r, permissions p
-WHERE r.name = 'ARTISTA' AND p.name IN ('music:read', 'music:create');
-
--- MODERADOR → music:read, music:create, user:delete
-INSERT INTO roles_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r, permissions p
-WHERE r.name = 'MODERADOR' AND p.name IN ('music:read', 'music:create', 'user:delete');
-
--- ADMIN → todas as permissões
-INSERT INTO roles_permissions (role_id, permission_id)
-SELECT r.id, p.id FROM roles r
-CROSS JOIN permissions p
-WHERE r.name = 'ADMIN';
