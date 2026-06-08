@@ -2,6 +2,7 @@ package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories;
 
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.RoleMapper;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.domain.role.repository.RoleRepository;
 import lombok.AllArgsConstructor;
@@ -52,4 +53,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     public boolean existePorId(final Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public boolean existePorNome(final ERole role) { return jpaRepository.existsByName(role); }
 }
