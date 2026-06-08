@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class RoleController {
     private final ExcluirRoleUseCase excluirRoleUseCase;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('role:create')")
     public ResponseEntity<NovoRecursoResponse> criar(@RequestBody @Valid final CreateRoleRequest request) {
         criarRoleUseCase.execute(request);
         return ResponseEntity.ok(NovoRecursoResponse.builder()
@@ -40,18 +42,21 @@ public class RoleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('role:read')")
     public ResponseEntity<List<RoleResponse>> listar() {
         final List<RoleResponse> roles = listarRolesUseCase.execute();
         return ResponseEntity.ok(roles);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('role:read')")
     public ResponseEntity<RoleResponse> buscarPorId(@PathVariable final Long id) {
         final RoleResponse role = buscarRolePorIdUseCase.execute(id);
         return ResponseEntity.ok(role);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('role:patch')")
     public ResponseEntity<RecursoAtualizadoResponse> atualizar(
             @PathVariable final Long id,
             @RequestBody @Valid final UpdateRoleRequest request
@@ -66,6 +71,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('role:delete')")
     public ResponseEntity<RecursoDeletadoResponse> excluir(@PathVariable final Long id) {
         excluirRoleUseCase.execute(id);
         return ResponseEntity.ok(new RecursoDeletadoResponse(

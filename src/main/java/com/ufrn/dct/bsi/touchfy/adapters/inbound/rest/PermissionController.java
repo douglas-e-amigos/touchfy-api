@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class PermissionController {
     private final ExcluirPermissionUseCase excluirPermissionUseCase;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('permission:create')")
     public ResponseEntity<NovoRecursoResponse> criar(@RequestBody @Valid final CreatePermissionRequest request) {
         criarPermissionUseCase.execute(request);
         return ResponseEntity.ok(NovoRecursoResponse.builder()
@@ -40,18 +42,21 @@ public class PermissionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('permission:read')")
     public ResponseEntity<List<PermissionResponse>> listar() {
         final List<PermissionResponse> permissions = listarPermissionsUseCase.execute();
         return ResponseEntity.ok(permissions);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('permission:read')")
     public ResponseEntity<PermissionResponse> buscarPorId(@PathVariable final Long id) {
         final PermissionResponse permission = buscarPermissionPorIdUseCase.execute(id);
         return ResponseEntity.ok(permission);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('permission:patch')")
     public ResponseEntity<RecursoAtualizadoResponse> atualizar(
             @PathVariable final Long id,
             @RequestBody @Valid final UpdatePermissionRequest request
@@ -66,6 +71,7 @@ public class PermissionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('permission:delete')")
     public ResponseEntity<RecursoDeletadoResponse> excluir(@PathVariable final Long id) {
         excluirPermissionUseCase.execute(id);
         return ResponseEntity.ok(new RecursoDeletadoResponse(
