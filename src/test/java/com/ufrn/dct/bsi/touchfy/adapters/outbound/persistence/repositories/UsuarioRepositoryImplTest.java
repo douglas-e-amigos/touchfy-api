@@ -1,21 +1,26 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories;
 
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.RoleEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import org.springframework.data.domain.AuditorAware;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class UsuarioRepositoryImplTest {
@@ -25,18 +30,20 @@ class UsuarioRepositoryImplTest {
     private AuditorAware<UUID> auditorAware;
 
     private UsuarioRepositoryImpl repository;
+    private RoleJpaRepository roleJpaRepository;
 
     @BeforeEach
     void setUp() {
         jpaRepository = mock(UsuarioJpaRepository.class);
         usuarioMapper = mock(UsuarioMapper.class);
         auditorAware = mock(AuditorAware.class);
+        roleJpaRepository = mock(RoleJpaRepository.class);
 
-        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper, auditorAware);
+        repository = new UsuarioRepositoryImpl(jpaRepository, usuarioMapper, auditorAware, roleJpaRepository);
     }
 
     private Usuario criarUsuarioValido() {
-        return new Usuario(UUID.randomUUID(), "Nome", "username", "senha", new Email("teste@email.com"), null, false, LocalDate.now());
+        return new Usuario(UUID.randomUUID(), "Nome", "username", "senha", new Email("teste@email.com"), null, false, LocalDate.now(), Set.of());
     }
 
     @Test
@@ -47,7 +54,13 @@ class UsuarioRepositoryImplTest {
         when(usuarioMapper.toEntity(usuario)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(entity);
 
-        UsuarioEntity resultado = repository.salvar(usuario);
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
+
+        UsuarioEntity resultado = repository.salvar(usuario, ERole.OUVINTE);
 
         assertNotNull(resultado);
         assertEquals(entity, resultado);
@@ -66,7 +79,13 @@ class UsuarioRepositoryImplTest {
         when(usuarioMapper.toEntity(usuario)).thenReturn(entityEntrada);
         when(jpaRepository.save(entityEntrada)).thenReturn(entitySalva);
 
-        UsuarioEntity resultado = repository.salvar(usuario);
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
+
+        UsuarioEntity resultado = repository.salvar(usuario, ERole.OUVINTE);
 
         assertEquals(entitySalva, resultado);
     }
@@ -79,7 +98,13 @@ class UsuarioRepositoryImplTest {
         when(usuarioMapper.toEntity(usuario)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(entity);
 
-        repository.salvar(usuario);
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setName(ERole.OUVINTE);
+
+        when(roleJpaRepository.findByName(ERole.OUVINTE))
+                .thenReturn(Optional.of(roleEntity));
+
+        repository.salvar(usuario, ERole.OUVINTE);
 
         var inOrder = inOrder(usuarioMapper, jpaRepository);
 

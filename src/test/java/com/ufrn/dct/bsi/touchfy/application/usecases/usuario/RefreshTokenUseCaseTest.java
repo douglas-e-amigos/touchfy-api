@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -275,7 +276,8 @@ class RefreshTokenUseCaseTest {
                 new Email("teste@email.com"),
                 null,
                 true,
-                LocalDate.now()
+                LocalDate.now(),
+                Set.of()
         );
     }
 }

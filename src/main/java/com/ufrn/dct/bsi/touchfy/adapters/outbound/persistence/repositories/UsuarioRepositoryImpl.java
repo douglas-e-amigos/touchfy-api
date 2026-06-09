@@ -1,10 +1,13 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories;
 
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.RoleEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
 
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 
@@ -14,8 +17,10 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -23,10 +28,18 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     private final UsuarioJpaRepository jpaRepository;
     private final UsuarioMapper usuarioMapper;
     private final AuditorAware<java.util.UUID> auditorAware;
+    private final RoleJpaRepository roleJpaRepository;
 
     @Override
-    public UsuarioEntity salvar(final Usuario usuario) {
-        return jpaRepository.save(usuarioMapper.toEntity(usuario));
+    public UsuarioEntity salvar(final Usuario usuario, final ERole role) {
+        final UsuarioEntity entity = usuarioMapper.toEntity(usuario);
+
+        final RoleEntity roleEntity = roleJpaRepository.findByName(role)
+            .orElseThrow(() -> new RuntimeException("Role não encontrada: " + role));
+        
+        entity.setRoles(new HashSet<>(Set.of(roleEntity)));
+
+        return jpaRepository.save(entity);
     }
 
     @Override

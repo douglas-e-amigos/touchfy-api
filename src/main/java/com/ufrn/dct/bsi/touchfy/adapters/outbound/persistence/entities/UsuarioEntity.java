@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.SQLRestriction;
@@ -43,4 +44,13 @@ public class UsuarioEntity extends AuditableEntity {
 
     @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns        = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> roles;
 }
+

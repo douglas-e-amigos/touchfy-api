@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,6 +55,7 @@ public class MusicaController {
     private final StreamingMusicaUseCase streamingMusicaUseCase;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('music:create')")
     public ResponseEntity<NovoRecursoResponse> criarMusica(@ModelAttribute @Valid final CriarMusicaRequest request) {
         criarMusicaUseCase.execute(request);
         return ResponseEntity.ok(NovoRecursoResponse.builder()
@@ -64,6 +66,7 @@ public class MusicaController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('music:create')")
     public ResponseEntity<RecursoAtualizadoResponse> atualizarMusica(
             @PathVariable("id") final UUID id,
             @ModelAttribute @Valid final AtualizarMusicaRequest request) {
@@ -99,7 +102,9 @@ public class MusicaController {
                 content = @Content(mediaType = "audio/mpeg", schema = @Schema(type = "string", format = "binary"))
             )
         })
-        @GetMapping(value = "/stream/{id}", produces = "audio/mpeg")
+
+    @GetMapping(value = "/stream/{id}", produces = "audio/mpeg")
+    @PreAuthorize("hasAuthority('music:read')")
     public ResponseEntity<byte[]> streamMusica(
             @PathVariable("id") final UUID id,
             @RequestHeader(value = HttpHeaders.RANGE, required = false) final String range) {
@@ -125,6 +130,7 @@ public class MusicaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('music:delete')")
     public ResponseEntity<RecursoDeletadoResponse> deletarMusica(@PathVariable("id") final UUID id) {
         deletarMusicaUseCase.execute(id);
         return ResponseEntity.ok(new RecursoDeletadoResponse(

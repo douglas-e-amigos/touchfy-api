@@ -20,7 +20,7 @@ public class CriarUsuarioUseCase {
         validarSenha(request.senha(), request.senhaNovamente());
         final var usuario = usuarioMapper.toDomain(request);
         usuario.setSenha(gerarHash(usuario.getSenha()));
-        usuarioRepository.salvar(usuario);
+        usuarioRepository.salvar(usuario, request.role());
     }
 
     private String gerarHash(final String senha) {

@@ -2,6 +2,7 @@ package com.ufrn.dct.bsi.touchfy.adapters.inbound.rest;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class ArquivoController {
     private final DeletarArquivoUseCase deletarArquivoUseCase;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('file:read')")
     public ResponseEntity<byte[]> buscar(@RequestParam("caminho") final String caminho) {
                 final ArquivoRecuperadoResponse arquivo = buscarArquivoUseCase.execute(caminho);
         final MediaType mediaType = arquivo.contentType() == null
@@ -48,6 +50,7 @@ public class ArquivoController {
             value = "/upload/{subDirectory}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
+    @PreAuthorize("hasAuthority('file:upload')")
     public ResponseEntity<ArquivoArmazenamentoResponse> upload(
             @PathVariable final String subDirectory,
             @RequestPart("file") final MultipartFile file
@@ -57,6 +60,7 @@ public class ArquivoController {
     }
 
     @DeleteMapping("/{subDirectory}/{nomeDoArquivo}")
+    @PreAuthorize("hasAuthority('file:delete')")
     public ResponseEntity<Void> deletar(
             @PathVariable final String subDirectory,
             @PathVariable final String nomeDoArquivo

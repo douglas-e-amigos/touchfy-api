@@ -2,6 +2,7 @@ package com.ufrn.dct.bsi.touchfy.application.usecases.usuario;
 
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordMaker;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +45,8 @@ class CriarUsuarioUseCaseTest {
                 new Email("teste@email.com"),
                 null,
                 false,
-                LocalDate.now()
+                LocalDate.now(),
+                Set.of()
         );
     }
 
@@ -54,7 +57,8 @@ class CriarUsuarioUseCaseTest {
                 "senha",
                 "senha",
                 "teste@email.com",
-                LocalDate.now()
+                LocalDate.now(),
+                ERole.OUVINTE
         );
     }
 
@@ -69,7 +73,7 @@ class CriarUsuarioUseCaseTest {
         useCase.execute(request);
 
         assertEquals("hash", usuario.getSenha());
-        verify(repository).salvar(usuario);
+        verify(repository).salvar(usuario, ERole.OUVINTE);
     }
 
     @Test
@@ -80,7 +84,8 @@ class CriarUsuarioUseCaseTest {
                 null,
                 null,
                 "teste@email.com",
-                LocalDate.now()
+                LocalDate.now(),
+                ERole.OUVINTE
         );
 
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
@@ -94,7 +99,8 @@ class CriarUsuarioUseCaseTest {
                 "senha1",
                 "senha2",
                 "teste@email.com",
-                LocalDate.now()
+                LocalDate.now(),
+                ERole.OUVINTE
         );
 
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
@@ -111,6 +117,6 @@ class CriarUsuarioUseCaseTest {
         useCase.execute(request);
 
         verify(passwordMaker).execute("senha");
-        verify(repository).salvar(usuario);
+        verify(repository).salvar(usuario, ERole.OUVINTE);
     }
 }

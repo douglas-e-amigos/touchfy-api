@@ -5,17 +5,21 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.EmailMappe
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.ImagemMapperImpl;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapperImpl;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.UsuarioRepositoryImpl;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.config.AuditTestConfig;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -45,6 +49,18 @@ public class UsuarioAuditTest {
     @Autowired
     private TestEntityManager entityManager;
 
+    @Autowired
+    private RoleJpaRepository roleJpaRepository;
+
+    @BeforeEach
+    void setup() {
+        if (!roleJpaRepository.existsByName(ERole.OUVINTE)) {
+            RoleEntity role = new RoleEntity();
+            role.setName(ERole.OUVINTE);
+            roleJpaRepository.save(role);
+        }
+    }
+
     private Usuario criarUsuarioExemplo() {
         return Usuario.builder()
                 .nome("user test")
@@ -59,7 +75,7 @@ public class UsuarioAuditTest {
     @WithMockUser("sistema")
     void DevePreencherCamposDeCriacaoUsuarioAudit() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
 
         assertThat(salvo.getCriadoPor()).isNotNull();
@@ -73,7 +89,7 @@ public class UsuarioAuditTest {
     @WithMockUser("sistema")
     void DevePreencherCamposDeAlteracaoUsuarioAudit() throws InterruptedException {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
 
         LocalDateTime dataCriacao = salvo.getCriadoEm();
@@ -104,7 +120,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void DeveFazerSoftDeleteComAuditoriaCompleta() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
 
@@ -124,7 +140,7 @@ public class UsuarioAuditTest {
     @Test
     void DeveFazerSoftDeleteSemUsuarioAutenticado() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
 
@@ -142,7 +158,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void NaoDeveretornarUsuarioDeletado() {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
         
@@ -160,7 +176,7 @@ public class UsuarioAuditTest {
     @WithMockUser("admin")
     void DevePreencherTimestampDeDeletacao() throws InterruptedException {
         Usuario usuario = criarUsuarioExemplo();
-        UsuarioEntity salvo = usuarioRepository.salvar(usuario);
+        UsuarioEntity salvo = usuarioRepository.salvar(usuario, ERole.OUVINTE);
         entityManager.flush();
         UUID usuarioId = salvo.getId();
         LocalDateTime antes = LocalDateTime.now();
