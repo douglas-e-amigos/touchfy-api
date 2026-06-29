@@ -55,7 +55,7 @@ public class SecurityConfig {
                 "http://localhost:3000", "http://localhost:8000",
                 "http://127.0.0.1:3000", "http://127.0.0.1:8000"
         )); 
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Range", "Content-Type", "Accept"));
         configuration.setExposedHeaders(Arrays.asList("Content-Range", "Accept-Ranges", "Content-Length"));
         configuration.setAllowCredentials(true); 

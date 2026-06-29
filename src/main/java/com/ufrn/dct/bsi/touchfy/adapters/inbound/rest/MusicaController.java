@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.AtualizarMusicaRequest;
@@ -25,6 +26,7 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.MusicaResponse;
 import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.StreamingMusicaResponse;
 import com.ufrn.dct.bsi.touchfy.application.usecases.musica.AtualizarMusicaUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.musica.BuscarMusicaUseCase;
+import com.ufrn.dct.bsi.touchfy.application.usecases.musica.ConsultarMusicasDoArtistaUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.musica.ConsultarMusicasUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.musica.CriarMusicaUseCase;
 import com.ufrn.dct.bsi.touchfy.application.usecases.musica.DeletarMusicaUseCase;
@@ -50,6 +52,7 @@ public class MusicaController {
     private final CriarMusicaUseCase criarMusicaUseCase;
     private final AtualizarMusicaUseCase atualizarMusicaUseCase;
     private final BuscarMusicaUseCase buscarMusicaUseCase;
+    private final ConsultarMusicasDoArtistaUseCase consultarMusicasDoArtistaUseCase;
     private final ConsultarMusicasUseCase consultarMusicasUseCase;
     private final DeletarMusicaUseCase deletarMusicaUseCase;
     private final StreamingMusicaUseCase streamingMusicaUseCase;
@@ -66,7 +69,7 @@ public class MusicaController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('music:create')")
+    @PreAuthorize("hasAuthority('music:update')")
     public ResponseEntity<RecursoAtualizadoResponse> atualizarMusica(
             @PathVariable("id") final UUID id,
             @ModelAttribute @Valid final AtualizarMusicaRequest request) {
@@ -80,8 +83,16 @@ public class MusicaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MusicaResponse>> consultarMusicas() {
-        return ResponseEntity.ok(consultarMusicasUseCase.execute());
+    public ResponseEntity<List<MusicaResponse>> consultarMusicas(
+            @RequestParam(value = "artista", required = false) final String artista) {
+        return ResponseEntity.ok(consultarMusicasUseCase.execute(artista));
+    }
+
+    @GetMapping("/artista/{artistaId}")
+    @PreAuthorize("hasAuthority('music:read')")
+    public ResponseEntity<List<MusicaResponse>> consultarMusicasDoArtista(
+            @PathVariable("artistaId") final UUID artistaId) {
+        return ResponseEntity.ok(consultarMusicasDoArtistaUseCase.execute(artistaId));
     }
 
     @GetMapping("/{id}")

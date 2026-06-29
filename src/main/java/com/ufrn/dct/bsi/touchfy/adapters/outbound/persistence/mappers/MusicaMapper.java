@@ -12,20 +12,11 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MusicaMapper {
-    // @Mapping(target = "id", source = "id")
-    // @Mapping(target = "nome", source = "nome")
-    // @Mapping(target = "caminhoDoArquivo", source = "caminhoDoArquivo")
-    // @Mapping(target = "letra", source = "letra")
-    // @Mapping(target = "tags", source = "tags")
-    // @Mapping(target = "generosMusicais", source = "generosMusicais")
+    @Mapping(target = "artistaNome", ignore = true)
+    @Mapping(target = "artistaNomeUsuario", ignore = true)
     Musica toDomain(MusicaEntity entity);
 
-    // @Mapping(target = "id", source = "id")
-    // @Mapping(target = "nome", source = "nome")
-    // @Mapping(target = "caminhoDoArquivo", source = "caminhoDoArquivo")
-    // @Mapping(target = "letra", source = "letra")
-    // @Mapping(target = "tags", source = "tags")
-    // @Mapping(target = "generosMusicais", source = "generosMusicais")
+    @Mapping(target = "artistaId", source = "criadoPor")
     MusicaResponse toResponse(Musica musica);
 
     @Mapping(target = "id", source = "tag.id")

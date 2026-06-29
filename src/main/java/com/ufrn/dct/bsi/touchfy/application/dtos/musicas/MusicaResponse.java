@@ -11,6 +11,9 @@ public record MusicaResponse(
         String nome,
         String caminhoDoArquivo,
         String letra,
+        UUID artistaId,
+        String artistaNome,
+        String artistaNomeUsuario,
         List<Tag> tags,
         List<GeneroMusical> generosMusicais
 ) {

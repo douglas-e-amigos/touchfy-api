@@ -29,10 +29,23 @@ class BuscarMusicaUseCaseTest {
                 .id(id)
                 .nome("Tempo Perdido")
                 .caminhoDoArquivo("musicas/arquivo.mp3")
+                .criadoPor(UUID.randomUUID())
+                .artistaNome("João")
+                .artistaNomeUsuario("joao")
                 .tags(List.of())
                 .generosMusicais(List.of())
                 .build();
-        final MusicaResponse response = new MusicaResponse(id, "Tempo Perdido", "musicas/arquivo.mp3", null, List.of(), List.of());
+        final MusicaResponse response = new MusicaResponse(
+                id,
+                "Tempo Perdido",
+                "musicas/arquivo.mp3",
+                null,
+                musica.getCriadoPor(),
+                "João",
+                "joao",
+                List.of(),
+                List.of()
+        );
 
         when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
         when(musicaMapper.toResponse(musica)).thenReturn(response);
