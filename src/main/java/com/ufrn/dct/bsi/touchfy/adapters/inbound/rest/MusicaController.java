@@ -69,7 +69,7 @@ public class MusicaController {
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('music:create')")
+    @PreAuthorize("hasAuthority('music:update')")
     public ResponseEntity<RecursoAtualizadoResponse> atualizarMusica(
             @PathVariable("id") final UUID id,
             @ModelAttribute @Valid final AtualizarMusicaRequest request) {

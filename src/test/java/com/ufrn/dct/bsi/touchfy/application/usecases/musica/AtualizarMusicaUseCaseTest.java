@@ -7,6 +7,8 @@ import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
@@ -28,10 +30,13 @@ class AtualizarMusicaUseCaseTest {
         final MusicaRepository repository = mock(MusicaRepository.class);
         final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
         final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final UUID artistaId = UUID.randomUUID();
+        final AuditorAware<UUID> auditorAware = () -> Optional.of(artistaId);
         final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
                 repository,
                 uploadArquivoUseCase,
-                deletarArquivoUseCase
+                deletarArquivoUseCase,
+                auditorAware
         );
         final UUID id = UUID.randomUUID();
         final MockMultipartFile arquivo = new MockMultipartFile(
@@ -51,6 +56,7 @@ class AtualizarMusicaUseCaseTest {
                 .id(id)
                 .nome("Tempo Perdido")
                 .caminhoDoArquivo("musicas/antiga/tempo-perdido.mp3")
+                .criadoPor(artistaId)
                 .build();
         final ArquivoArmazenamentoResponse response = new ArquivoArmazenamentoResponse(
                 "tempo-perdido.mp3",
@@ -74,10 +80,13 @@ class AtualizarMusicaUseCaseTest {
         final MusicaRepository repository = mock(MusicaRepository.class);
         final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
         final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final UUID artistaId = UUID.randomUUID();
+        final AuditorAware<UUID> auditorAware = () -> Optional.of(artistaId);
         final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
                 repository,
                 uploadArquivoUseCase,
-                deletarArquivoUseCase
+                deletarArquivoUseCase,
+                auditorAware
         );
         final UUID id = UUID.randomUUID();
         final AtualizarMusicaRequest request = new AtualizarMusicaRequest(
@@ -91,6 +100,7 @@ class AtualizarMusicaUseCaseTest {
                 .id(id)
                 .nome("Tempo Perdido")
                 .caminhoDoArquivo("musicas/antiga/tempo-perdido.mp3")
+                .criadoPor(artistaId)
                 .build();
 
         when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
@@ -98,8 +108,58 @@ class AtualizarMusicaUseCaseTest {
         useCase.execute(id, request);
 
         verify(deletarArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.anyString());
-        verify(uploadArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyString());
+        verify(uploadArquivoUseCase, never()).execute(
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.anyString()
+        );
         verify(repository, times(1)).atualizar(id, request, null);
+    }
+
+    @Test
+    void deveBloquearAtualizacaoQuandoUsuarioNaoForCriador() {
+        final MusicaRepository repository = mock(MusicaRepository.class);
+        final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+        final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final AuditorAware<UUID> auditorAware = () -> Optional.of(UUID.randomUUID());
+        final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
+                repository,
+                uploadArquivoUseCase,
+                deletarArquivoUseCase,
+                auditorAware
+        );
+        final UUID id = UUID.randomUUID();
+        final AtualizarMusicaRequest request = new AtualizarMusicaRequest(
+                "Tempo Perdido",
+                null,
+                null,
+                null,
+                null
+        );
+        final Musica musica = Musica.builder()
+                .id(id)
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/antiga/tempo-perdido.mp3")
+                .criadoPor(UUID.randomUUID())
+                .build();
+
+        when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+        final AccessDeniedException exception = assertThrows(
+                AccessDeniedException.class,
+                () -> useCase.execute(id, request)
+        );
+
+        assertEquals("Usuário não tem permissão para alterar esta música.", exception.getMessage());
+        verify(deletarArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.anyString());
+        verify(uploadArquivoUseCase, never()).execute(
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.anyString()
+        );
+        verify(repository, never()).atualizar(
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any(),
+                org.mockito.ArgumentMatchers.any()
+        );
     }
 
     @Test
@@ -107,10 +167,12 @@ class AtualizarMusicaUseCaseTest {
         final MusicaRepository repository = mock(MusicaRepository.class);
         final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
         final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+        final AuditorAware<UUID> auditorAware = Optional::<UUID>empty;
         final AtualizarMusicaUseCase useCase = new AtualizarMusicaUseCase(
                 repository,
                 uploadArquivoUseCase,
-                deletarArquivoUseCase
+                deletarArquivoUseCase,
+                auditorAware
         );
 
         final var exception = assertThrows(IllegalArgumentException.class, () -> useCase.execute(null, null));
