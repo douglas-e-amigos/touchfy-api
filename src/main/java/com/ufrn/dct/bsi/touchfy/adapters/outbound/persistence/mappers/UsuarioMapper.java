@@ -4,9 +4,13 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEn
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.UsuarioResponse;
+import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 
 import org.mapstruct.*;
+
+import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {ImagemMapper.class, EmailMapper.class})
 public interface UsuarioMapper {
@@ -25,5 +29,19 @@ public interface UsuarioMapper {
 
     @Mapping(source = "email", target = "email", qualifiedByName = "mapEmailToValue")
     @Mapping(source = "imagem", target = "fotoPerfil", qualifiedByName = "mapImageToPath")
+    @Mapping(source = "roles", target = "roles", qualifiedByName = "mapRolesToNames")
     UsuarioResponse toResponse(Usuario usuario);
+
+    @Named("mapRolesToNames")
+    default List<String> mapRolesToNames(final Set<Role> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return List.of();
+        }
+
+        return roles.stream()
+                .map(Role::getName)
+                .map(Enum::name)
+                .sorted()
+                .toList();
+    }
 }

@@ -1,6 +1,7 @@
 package com.ufrn.dct.bsi.touchfy.application.usecases.usuario;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,7 +72,8 @@ class BuscarUsuarioUseCaseTest {
                 "joao123",
                 "joao@email.com",
                 "2000-01-01",
-                "/imagens/joao.png"
+                "/imagens/joao.png",
+                List.of("OUVINTE")
         );
 
         when(usuarioRepository.acharPeloId(idUsuario))
@@ -92,6 +94,7 @@ class BuscarUsuarioUseCaseTest {
         assertEquals("joao@email.com", resultado.email());
         assertEquals("2000-01-01", resultado.dataNascimento());
         assertEquals("/imagens/joao.png", resultado.fotoPerfil());
+        assertEquals(List.of("OUVINTE"), resultado.roles());
 
         verify(usuarioRepository, times(1))
                 .acharPeloId(idUsuario);

@@ -57,7 +57,8 @@ class BuscarUsuarioLogadoUseCaseTest {
                 "joao123",
                 "joao@email.com",
                 "2000-01-01",
-                "/imagens/joao.png"
+                "/imagens/joao.png",
+                List.of("ARTISTA")
         );
 
         SecurityContextHolder.getContext().setAuthentication(
@@ -77,6 +78,7 @@ class BuscarUsuarioLogadoUseCaseTest {
         assertEquals("joao@email.com", resultado.email());
         assertEquals("2000-01-01", resultado.dataNascimento());
         assertEquals("/imagens/joao.png", resultado.fotoPerfil());
+        assertEquals(List.of("ARTISTA"), resultado.roles());
 
         verify(usuarioRepository, times(1)).buscarPorNomeUsuario("joao123");
         verify(usuarioMapper, times(1)).toResponse(usuario);
