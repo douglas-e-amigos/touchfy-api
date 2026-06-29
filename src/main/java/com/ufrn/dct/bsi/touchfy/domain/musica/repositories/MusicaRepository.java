@@ -13,6 +13,10 @@ public interface MusicaRepository {
 
     List<Musica> consultar();
 
+    List<Musica> consultarPorCriadoPor(UUID criadoPor);
+
+    List<Musica> consultarPorNomeArtista(String artista);
+
     Optional<Musica> acharPeloId(UUID id);
 
     void atualizar(UUID id, AtualizarMusicaRequest request, String caminhoDoArquivo);

@@ -12,6 +12,10 @@ public interface MusicaJpaRepository extends JpaRepository<MusicaEntity, UUID> {
     @Override
     List<MusicaEntity> findAll();
 
+    List<MusicaEntity> findByCriadoPor(UUID criadoPor);
+
+    List<MusicaEntity> findByCriadoPorIn(List<UUID> criadoPor);
+
     @Override
     Optional<MusicaEntity> findById(UUID id);
 }

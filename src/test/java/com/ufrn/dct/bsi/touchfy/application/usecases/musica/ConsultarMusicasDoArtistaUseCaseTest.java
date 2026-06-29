@@ -10,23 +10,29 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ConsultarMusicasUseCaseTest {
+class ConsultarMusicasDoArtistaUseCaseTest {
 
     @Test
-    void deveConsultarMusicas() {
+    void deveConsultarMusicasPeloIdDoArtista() {
         final MusicaRepository repository = mock(MusicaRepository.class);
         final MusicaMapper musicaMapper = mock(MusicaMapper.class);
-        final ConsultarMusicasUseCase useCase = new ConsultarMusicasUseCase(repository, musicaMapper);
+        final ConsultarMusicasDoArtistaUseCase useCase = new ConsultarMusicasDoArtistaUseCase(
+                repository,
+                musicaMapper
+        );
+        final UUID artistaId = UUID.randomUUID();
         final Musica musica = Musica.builder()
                 .id(UUID.randomUUID())
                 .nome("Tempo Perdido")
                 .caminhoDoArquivo("musicas/arquivo.mp3")
-                .criadoPor(UUID.randomUUID())
+                .criadoPor(artistaId)
                 .artistaNome("João")
                 .artistaNomeUsuario("joao")
                 .build();
@@ -35,55 +41,38 @@ class ConsultarMusicasUseCaseTest {
                 musica.getNome(),
                 musica.getCaminhoDoArquivo(),
                 null,
-                musica.getCriadoPor(),
+                artistaId,
                 "João",
                 "joao",
                 List.of(),
                 List.of()
         );
 
-        when(repository.consultar()).thenReturn(List.of(musica));
+        when(repository.consultarPorCriadoPor(artistaId)).thenReturn(List.of(musica));
         when(musicaMapper.toResponse(musica)).thenReturn(response);
 
-        final List<MusicaResponse> resultado = useCase.execute();
+        final List<MusicaResponse> resultado = useCase.execute(artistaId);
 
         assertEquals(List.of(response), resultado);
-        verify(repository, times(1)).consultar();
+        verify(repository, times(1)).consultarPorCriadoPor(artistaId);
         verify(musicaMapper, times(1)).toResponse(musica);
     }
 
     @Test
-    void deveConsultarMusicasPorNomeDoArtista() {
+    void deveLancarExcecaoQuandoIdDoArtistaForNulo() {
         final MusicaRepository repository = mock(MusicaRepository.class);
         final MusicaMapper musicaMapper = mock(MusicaMapper.class);
-        final ConsultarMusicasUseCase useCase = new ConsultarMusicasUseCase(repository, musicaMapper);
-        final Musica musica = Musica.builder()
-                .id(UUID.randomUUID())
-                .nome("Tempo Perdido")
-                .caminhoDoArquivo("musicas/arquivo.mp3")
-                .criadoPor(UUID.randomUUID())
-                .artistaNome("João")
-                .artistaNomeUsuario("joao")
-                .build();
-        final MusicaResponse response = new MusicaResponse(
-                musica.getId(),
-                musica.getNome(),
-                musica.getCaminhoDoArquivo(),
-                null,
-                musica.getCriadoPor(),
-                "João",
-                "joao",
-                List.of(),
-                List.of()
+        final ConsultarMusicasDoArtistaUseCase useCase = new ConsultarMusicasDoArtistaUseCase(
+                repository,
+                musicaMapper
         );
 
-        when(repository.consultarPorNomeArtista("João")).thenReturn(List.of(musica));
-        when(musicaMapper.toResponse(musica)).thenReturn(response);
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> useCase.execute(null)
+        );
 
-        final List<MusicaResponse> resultado = useCase.execute("  João  ");
-
-        assertEquals(List.of(response), resultado);
-        verify(repository, times(1)).consultarPorNomeArtista("João");
-        verify(musicaMapper, times(1)).toResponse(musica);
+        assertEquals("ID do artista é obrigatório.", exception.getMessage());
+        verify(repository, never()).consultarPorCriadoPor(org.mockito.ArgumentMatchers.any());
     }
 }

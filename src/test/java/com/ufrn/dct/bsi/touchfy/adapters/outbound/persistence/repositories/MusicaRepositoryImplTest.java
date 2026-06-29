@@ -5,10 +5,12 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.GeneroMus
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.MusicaDaTagEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.MusicaEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.TagEntity;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEntity;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.MusicaMapper;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.GeneroMusicalJpaRepository;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.MusicaJpaRepository;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.TagJpaRepository;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
 import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.AtualizarMusicaRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.CriarMusicaRequest;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
@@ -41,12 +43,14 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID tagId = UUID.randomUUID();
@@ -59,7 +63,10 @@ class MusicaRepositoryImplTest {
                 new MockMultipartFile("arquivo", "tempo-perdido.mp3", "audio/mpeg", "abc".getBytes())
         );
         final TagEntity tagEntity = TagEntity.builder().id(tagId).nome("Rock").build();
-        final GeneroMusicalEntity generoEntity = GeneroMusicalEntity.builder().id(generoId).nome("Rock Nacional").build();
+        final GeneroMusicalEntity generoEntity = GeneroMusicalEntity.builder()
+                .id(generoId)
+                .nome("Rock Nacional")
+                .build();
 
         when(tagJpaRepository.findAllById(List.of(tagId))).thenReturn(List.of(tagEntity));
         when(generoMusicalJpaRepository.findAllById(List.of(generoId))).thenReturn(List.of(generoEntity));
@@ -84,32 +91,139 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
+        final UUID artistaId = UUID.randomUUID();
         final MusicaEntity entity = MusicaEntity.builder()
                 .id(UUID.randomUUID())
                 .nome("Tempo Perdido")
                 .caminhoDoArquivo("musicas/arquivo.mp3")
+                .criadoPor(artistaId)
                 .build();
         final Musica musica = Musica.builder()
                 .id(entity.getId())
                 .nome(entity.getNome())
                 .caminhoDoArquivo(entity.getCaminhoDoArquivo())
+                .criadoPor(artistaId)
+                .build();
+        final UsuarioEntity artista = UsuarioEntity.builder()
+                .id(artistaId)
+                .nome("João")
+                .nomeUsuario("joao")
                 .build();
 
         when(jpaRepository.findAll()).thenReturn(List.of(entity));
         when(mapper.toDomain(entity)).thenReturn(musica);
+        when(usuarioJpaRepository.findAllById(List.of(artistaId))).thenReturn(List.of(artista));
 
         final List<Musica> resultado = repository.consultar();
 
         assertEquals(List.of(musica), resultado);
+        assertEquals("João", resultado.getFirst().getArtistaNome());
+        assertEquals("joao", resultado.getFirst().getArtistaNomeUsuario());
         verify(mapper, times(1)).toDomain(entity);
+    }
+
+    @Test
+    void deveConsultarMusicasPorCriadoPor() {
+        final AuditorAware<UUID> auditorAware = Optional::<UUID>empty;
+        final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
+        final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
+        final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
+        final MusicaMapper mapper = mock(MusicaMapper.class);
+        final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
+                auditorAware,
+                jpaRepository,
+                tagJpaRepository,
+                generoMusicalJpaRepository,
+                usuarioJpaRepository,
+                mapper
+        );
+        final UUID artistaId = UUID.randomUUID();
+        final MusicaEntity entity = MusicaEntity.builder()
+                .id(UUID.randomUUID())
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/arquivo.mp3")
+                .criadoPor(artistaId)
+                .build();
+        final Musica musica = Musica.builder()
+                .id(entity.getId())
+                .nome(entity.getNome())
+                .caminhoDoArquivo(entity.getCaminhoDoArquivo())
+                .criadoPor(artistaId)
+                .build();
+        final UsuarioEntity artista = UsuarioEntity.builder()
+                .id(artistaId)
+                .nome("João")
+                .nomeUsuario("joao")
+                .build();
+
+        when(jpaRepository.findByCriadoPor(artistaId)).thenReturn(List.of(entity));
+        when(mapper.toDomain(entity)).thenReturn(musica);
+        when(usuarioJpaRepository.findAllById(List.of(artistaId))).thenReturn(List.of(artista));
+
+        final List<Musica> resultado = repository.consultarPorCriadoPor(artistaId);
+
+        assertEquals(List.of(musica), resultado);
+        assertEquals("João", resultado.getFirst().getArtistaNome());
+        verify(jpaRepository, times(1)).findByCriadoPor(artistaId);
+    }
+
+    @Test
+    void deveConsultarMusicasPorNomeDoArtista() {
+        final AuditorAware<UUID> auditorAware = Optional::<UUID>empty;
+        final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
+        final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
+        final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
+        final MusicaMapper mapper = mock(MusicaMapper.class);
+        final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
+                auditorAware,
+                jpaRepository,
+                tagJpaRepository,
+                generoMusicalJpaRepository,
+                usuarioJpaRepository,
+                mapper
+        );
+        final UUID artistaId = UUID.randomUUID();
+        final UsuarioEntity artista = UsuarioEntity.builder()
+                .id(artistaId)
+                .nome("João")
+                .nomeUsuario("joao")
+                .build();
+        final MusicaEntity entity = MusicaEntity.builder()
+                .id(UUID.randomUUID())
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/arquivo.mp3")
+                .criadoPor(artistaId)
+                .build();
+        final Musica musica = Musica.builder()
+                .id(entity.getId())
+                .nome(entity.getNome())
+                .caminhoDoArquivo(entity.getCaminhoDoArquivo())
+                .criadoPor(artistaId)
+                .build();
+
+        when(usuarioJpaRepository.findByNomeContainingIgnoreCaseOrNomeUsuarioContainingIgnoreCase("jo", "jo"))
+                .thenReturn(List.of(artista));
+        when(jpaRepository.findByCriadoPorIn(List.of(artistaId))).thenReturn(List.of(entity));
+        when(mapper.toDomain(entity)).thenReturn(musica);
+        when(usuarioJpaRepository.findAllById(List.of(artistaId))).thenReturn(List.of(artista));
+
+        final List<Musica> resultado = repository.consultarPorNomeArtista("jo");
+
+        assertEquals(List.of(musica), resultado);
+        assertEquals("João", resultado.getFirst().getArtistaNome());
+        verify(jpaRepository, times(1)).findByCriadoPorIn(List.of(artistaId));
     }
 
     @Test
@@ -118,17 +232,27 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID id = UUID.randomUUID();
-        final MusicaEntity entity = MusicaEntity.builder().id(id).nome("Tempo Perdido").caminhoDoArquivo("musicas/arquivo.mp3").build();
-        final Musica musica = Musica.builder().id(id).nome("Tempo Perdido").caminhoDoArquivo("musicas/arquivo.mp3").build();
+        final MusicaEntity entity = MusicaEntity.builder()
+                .id(id)
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/arquivo.mp3")
+                .build();
+        final Musica musica = Musica.builder()
+                .id(id)
+                .nome("Tempo Perdido")
+                .caminhoDoArquivo("musicas/arquivo.mp3")
+                .build();
 
         when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
         when(mapper.toDomain(entity)).thenReturn(musica);
@@ -145,12 +269,14 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID id = UUID.randomUUID();
@@ -177,7 +303,10 @@ class MusicaRepositoryImplTest {
                 null
         );
         final TagEntity tagEntity = TagEntity.builder().id(tagId).nome("Rock").build();
-        final GeneroMusicalEntity generoEntity = GeneroMusicalEntity.builder().id(generoId).nome("Rock Nacional").build();
+        final GeneroMusicalEntity generoEntity = GeneroMusicalEntity.builder()
+                .id(generoId)
+                .nome("Rock Nacional")
+                .build();
 
         when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
         when(tagJpaRepository.findAllById(List.of(tagId))).thenReturn(List.of(tagEntity));
@@ -201,12 +330,14 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID id = UUID.randomUUID();
@@ -228,12 +359,14 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID id = UUID.randomUUID();
@@ -260,12 +393,14 @@ class MusicaRepositoryImplTest {
         final MusicaJpaRepository jpaRepository = mock(MusicaJpaRepository.class);
         final TagJpaRepository tagJpaRepository = mock(TagJpaRepository.class);
         final GeneroMusicalJpaRepository generoMusicalJpaRepository = mock(GeneroMusicalJpaRepository.class);
+        final UsuarioJpaRepository usuarioJpaRepository = mock(UsuarioJpaRepository.class);
         final MusicaMapper mapper = mock(MusicaMapper.class);
         final MusicaRepositoryImpl repository = new MusicaRepositoryImpl(
                 auditorAware,
                 jpaRepository,
                 tagJpaRepository,
                 generoMusicalJpaRepository,
+                usuarioJpaRepository,
                 mapper
         );
         final UUID id = UUID.randomUUID();

@@ -9,20 +9,26 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
 public class Musica {
     private UUID id;
     private String nome;
     private String caminhoDoArquivo;
     private String letra;
+    private UUID criadoPor;
+    private String artistaNome;
+    private String artistaNomeUsuario;
     private List<Tag> tags;
     private List<GeneroMusical> generosMusicais;
 
+    @Builder
     public Musica(
             final UUID id,
             final String nome,
             final String caminhoDoArquivo,
             final String letra,
+            final UUID criadoPor,
+            final String artistaNome,
+            final String artistaNomeUsuario,
             final List<Tag> tags,
             final List<GeneroMusical> generosMusicais
     ) {
@@ -42,7 +48,21 @@ public class Musica {
         this.nome = nome;
         this.caminhoDoArquivo = caminhoDoArquivo;
         this.letra = letra;
+        this.criadoPor = criadoPor;
+        this.artistaNome = artistaNome;
+        this.artistaNomeUsuario = artistaNomeUsuario;
         this.tags = tags == null ? List.of() : tags;
         this.generosMusicais = generosMusicais == null ? List.of() : generosMusicais;
+    }
+
+    public Musica(
+            final UUID id,
+            final String nome,
+            final String caminhoDoArquivo,
+            final String letra,
+            final List<Tag> tags,
+            final List<GeneroMusical> generosMusicais
+    ) {
+        this(id, nome, caminhoDoArquivo, letra, null, null, null, tags, generosMusicais);
     }
 }
