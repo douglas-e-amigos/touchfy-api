@@ -13,7 +13,7 @@ public class CriarGeneroMusicalUseCase {
     public void execute(final CriarGeneroMusicalRequest request) {
         if (request == null || request.nome() == ""
                 || request.nome().length() > 100 || request.nome().length() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Os dados do gênero musical são inválidos.");
         }
 
         repository.salvar(request);
