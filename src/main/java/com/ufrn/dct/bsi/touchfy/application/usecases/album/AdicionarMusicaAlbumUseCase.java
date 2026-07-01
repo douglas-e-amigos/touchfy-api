@@ -1,6 +1,9 @@
 package com.ufrn.dct.bsi.touchfy.application.usecases.album;
 
 import com.ufrn.dct.bsi.touchfy.domain.album.repositories.AlbumRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.ConflitoDeNegocioException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,14 +16,14 @@ public class AdicionarMusicaAlbumUseCase {
 
     public void execute(final UUID albumId, final UUID musicaId, final UUID usuarioId) {
         final var album = repository.acharPeloId(albumId)
-                .orElseThrow(() -> new RuntimeException("Álbum não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Álbum não encontrado."));
 
         if (!album.getArtistaId().equals(usuarioId)) {
-            throw new RuntimeException("Usuário não autorizado a modificar este álbum.");
+            throw new AcessoNegadoException("Usuário não autorizado a modificar este álbum.");
         }
 
         if (repository.existeMusicaNoAlbum(albumId, musicaId)) {
-            throw new RuntimeException("Música já está no álbum.");
+            throw new ConflitoDeNegocioException("Música já está no álbum.");
         }
 
         final int proximaOrdem = album.getMusicas().size();
