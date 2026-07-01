@@ -20,7 +20,9 @@ public class ValidarTamanhoArquivo implements ConstraintValidator<TamanhoArquivo
             return true;
         }
         if (this.tamanhoArquivo.getTamanhoMinimo() > this.tamanhoArquivo.getTamanhoMaximo()) {
-            throw new RuntimeException("O tamanho mínimo do arquivo deve ser menor ou igual que o tamanho máximo.");
+            final String msg = "O tamanho mínimo do arquivo deve ser menor ou igual"
+                    + " que o tamanho máximo.";
+            throw new IllegalArgumentException(msg);
         }
         final long tamanhoArquivo = multipartFile.getSize();
 
