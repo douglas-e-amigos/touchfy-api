@@ -20,11 +20,13 @@ import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoRecuperadoResponse;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.IntegracaoExternaException;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 class GarageFileStorageImplTest {
 
@@ -122,18 +124,18 @@ class GarageFileStorageImplTest {
         );
 
         when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class)))
-                .thenThrow(RuntimeException.class);
+                .thenThrow(S3Exception.builder().build());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(IntegracaoExternaException.class,
                 () -> storage.store(file, "perfil"));
     }
 
     @Test
     void deveLancarExcecaoQuandoFalhaNaBusca() {
         when(s3Client.getObjectAsBytes(any(GetObjectRequest.class)))
-                .thenThrow(RuntimeException.class);
+                .thenThrow(S3Exception.builder().build());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(IntegracaoExternaException.class,
                 () -> storage.retrieve("perfil/uuid.png"));
     }
 }

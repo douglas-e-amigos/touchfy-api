@@ -6,9 +6,9 @@ import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.UploadArquivoUseCas
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
@@ -144,8 +144,8 @@ class AtualizarMusicaUseCaseTest {
 
         when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
 
-        final AccessDeniedException exception = assertThrows(
-                AccessDeniedException.class,
+        final AcessoNegadoException exception = assertThrows(
+                AcessoNegadoException.class,
                 () -> useCase.execute(id, request)
         );
 

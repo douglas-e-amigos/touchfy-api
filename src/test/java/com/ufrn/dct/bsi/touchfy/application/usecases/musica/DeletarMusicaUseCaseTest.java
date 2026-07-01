@@ -3,9 +3,9 @@ package com.ufrn.dct.bsi.touchfy.application.usecases.musica;
 import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.DeletarArquivoUseCase;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -67,8 +67,8 @@ class DeletarMusicaUseCaseTest {
 
         when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
 
-        final AccessDeniedException exception = assertThrows(
-                AccessDeniedException.class,
+        final AcessoNegadoException exception = assertThrows(
+                AcessoNegadoException.class,
                 () -> useCase.execute(id)
         );
 
