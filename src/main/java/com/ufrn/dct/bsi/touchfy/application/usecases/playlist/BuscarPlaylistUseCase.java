@@ -4,6 +4,7 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.PlaylistMa
 import com.ufrn.dct.bsi.touchfy.application.dtos.playlist.PlaylistResponse;
 import com.ufrn.dct.bsi.touchfy.domain.playlist.models.Playlist;
 import com.ufrn.dct.bsi.touchfy.domain.playlist.repositories.PlaylistRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,10 @@ public class BuscarPlaylistUseCase {
 
     public PlaylistResponse execute(final UUID playlistId, final UUID usuarioId) {
         final var playlist = repository.acharPeloId(playlistId)
-                .orElseThrow(() -> new RuntimeException("Playlist não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Playlist não encontrada."));
 
         if (!isVisivelPara(playlist, usuarioId)) {
-            throw new RuntimeException("Playlist não encontrada.");
+            throw new RecursoNaoEncontradoException("Playlist não encontrada.");
         }
 
         return playlistMapper.toResponse(playlist);

@@ -7,6 +7,8 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.TokenResponse;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.RefreshTokenRepository;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.TokenService;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,23 +24,23 @@ public class RefreshTokenUseCase {
 
     public TokenResponse execute(final String refreshToken) {
         final var entity = refreshTokenRepository.acharPeloToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("Refresh token invalido"));
+                .orElseThrow(() -> new NaoAutenticadoException("Refresh token invalido"));
 
         if (entity.getRevogado()) {
-            throw new RuntimeException("Refresh token revogado");
+            throw new NaoAutenticadoException("Refresh token revogado");
         }
 
         if (entity.getExpiracao().isBefore(Instant.now())) {
-            throw new RuntimeException("Refresh token expirado");
+            throw new NaoAutenticadoException("Refresh token expirado");
         }
 
         if (!tokenService.isRefreshTokenValid(refreshToken)) {
-            throw new RuntimeException("Refresh token invalido");
+            throw new NaoAutenticadoException("Refresh token invalido");
         }
 
         final String nomeDeUsuario = tokenService.getRefreshSubject(refreshToken);
         final UsuarioEntity usuario = usuarioRepository.acharPeloNomeDeUsuario(nomeDeUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
         final String novoAccessToken = tokenService.generateAccessToken(usuarioMapper.toDomain(usuario));
 
         return TokenResponse.builder()

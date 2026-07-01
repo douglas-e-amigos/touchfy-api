@@ -5,6 +5,7 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordMaker;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RequisicaoInvalidaException;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class CriarUsuarioUseCase {
             throw new IllegalArgumentException("A senha é obrigatória.");
         }
         if (!senha.equals(senhaNovamente)) {
-            throw new IllegalArgumentException("As senhas devem ser iguais.");
+            throw new RequisicaoInvalidaException("As senhas devem ser iguais.");
         }
     }
 }

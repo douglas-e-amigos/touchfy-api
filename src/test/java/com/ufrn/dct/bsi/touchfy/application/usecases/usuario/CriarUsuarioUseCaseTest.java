@@ -4,6 +4,7 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RequisicaoInvalidaException;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordMaker;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
@@ -103,7 +104,7 @@ class CriarUsuarioUseCaseTest {
                 ERole.OUVINTE
         );
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute(request));
+        assertThrows(RequisicaoInvalidaException.class, () -> useCase.execute(request));
     }
 
     @Test

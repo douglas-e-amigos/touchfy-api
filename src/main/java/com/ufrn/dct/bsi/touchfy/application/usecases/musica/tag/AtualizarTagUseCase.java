@@ -15,7 +15,7 @@ public class AtualizarTagUseCase {
     public void execute(final UUID id, final AtualizarTagRequest request) {
         if (request == null || id == null || request.nome() == ""
                 || request.nome().length() > 100 || request.nome().length() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Os dados da tag são inválidos.");
         }
 
         repository.atualizar(id, request);

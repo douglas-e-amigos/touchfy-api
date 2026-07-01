@@ -13,7 +13,7 @@ public class CriarTagUseCase {
     public void execute(final CriarTagRequest request) {
         if (request == null || request.nome() == ""
                 || request.nome().length() > 100 || request.nome().length() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Os dados da tag são inválidos.");
         }
 
         repository.salvar(request);

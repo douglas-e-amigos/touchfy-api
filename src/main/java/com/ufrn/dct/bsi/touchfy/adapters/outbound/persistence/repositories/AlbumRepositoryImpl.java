@@ -15,6 +15,8 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.album.CriarAlbumRequest;
 import com.ufrn.dct.bsi.touchfy.domain.album.models.Album;
 import com.ufrn.dct.bsi.touchfy.domain.album.models.AlbumSalvo;
 import com.ufrn.dct.bsi.touchfy.domain.album.repositories.AlbumRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RequisicaoInvalidaException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Repository;
@@ -47,14 +49,14 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
         if (request.dataLancamento() != null) {
             if (request.dataLancamento().isBefore(LocalDate.now())) {
-                throw new IllegalArgumentException("Data de lançamento não pode estar no passado.");
+                throw new RequisicaoInvalidaException("Data de lançamento não pode estar no passado.");
             }
             builder.dataLancamento(request.dataLancamento());
         }
 
         if (request.generoMusicalId() != null) {
             final GeneroMusicalEntity genero = generoMusicalJpaRepository.findById(request.generoMusicalId())
-                    .orElseThrow(() -> new RuntimeException("Gênero musical não encontrado."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Gênero musical não encontrado."));
             builder.generoMusical(genero);
         }
 
@@ -70,14 +72,14 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
         if (request.dataLancamento() != null) {
             if (request.dataLancamento().isBefore(LocalDate.now())) {
-                throw new IllegalArgumentException("Data de lançamento não pode estar no passado.");
+                throw new RequisicaoInvalidaException("Data de lançamento não pode estar no passado.");
             }
             entity.setDataLancamento(request.dataLancamento());
         }
 
         if (request.generoMusicalId() != null) {
             final GeneroMusicalEntity genero = generoMusicalJpaRepository.findById(request.generoMusicalId())
-                    .orElseThrow(() -> new RuntimeException("Gênero musical não encontrado."));
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Gênero musical não encontrado."));
             entity.setGeneroMusical(genero);
         } else {
             entity.setGeneroMusical(null);
@@ -116,7 +118,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     public void adicionarMusica(final UUID albumId, final UUID musicaId, final Integer ordem) {
         final var album = acharEntidadePeloId(albumId);
         final var musica = musicaJpaRepository.findById(musicaId)
-                .orElseThrow(() -> new RuntimeException("Música não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Música não encontrada."));
 
         final var relacao = AlbumMusicaEntity.builder()
                 .album(album)
@@ -172,6 +174,6 @@ public class AlbumRepositoryImpl implements AlbumRepository {
 
     private AlbumEntity acharEntidadePeloId(final UUID id) {
         return jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Álbum não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Álbum não encontrado."));
     }
 }

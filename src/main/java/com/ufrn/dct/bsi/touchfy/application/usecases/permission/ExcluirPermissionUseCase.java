@@ -1,6 +1,7 @@
 package com.ufrn.dct.bsi.touchfy.application.usecases.permission;
 
 import com.ufrn.dct.bsi.touchfy.domain.permission.repository.PermissionRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ public class ExcluirPermissionUseCase {
 
     public void execute(final Long id) {
         if (!permissionRepository.existePorId(id)) {
-            throw new RuntimeException("Permissão não encontrada para o ID: " + id);
+            throw new RecursoNaoEncontradoException("Permissão não encontrada para o ID: " + id);
         }
         permissionRepository.excluir(id);
     }

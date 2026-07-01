@@ -5,6 +5,7 @@ import com.ufrn.dct.bsi.touchfy.domain.permission.Permission;
 import com.ufrn.dct.bsi.touchfy.domain.permission.repository.PermissionRepository;
 import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.domain.role.repository.RoleRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +24,14 @@ public class AtualizarRoleUseCase {
             throw new IllegalArgumentException("O nome do perfil é obrigatório.");
         }
         final Role role = roleRepository.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o ID: " + id));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Perfil não encontrado para o ID: " + id));
 
         final Set<Permission> permissions = new HashSet<>();
         if (request.permissionIds() != null) {
             for (final Long permissionId : request.permissionIds()) {
+                final String mensagem = "Permissão não encontrada para o ID: " + permissionId;
                 final Permission permission = permissionRepository.buscarPorId(permissionId)
-                        .orElseThrow(() -> new RuntimeException("Permissão não encontrada para o ID: " + permissionId));
+                        .orElseThrow(() -> new RecursoNaoEncontradoException(mensagem));
                 permissions.add(permission);
             }
         }

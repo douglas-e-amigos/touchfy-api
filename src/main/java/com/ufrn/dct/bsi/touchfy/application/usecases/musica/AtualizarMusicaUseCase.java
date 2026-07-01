@@ -6,9 +6,11 @@ import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.DeletarArquivoUseCa
 import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.UploadArquivoUseCase;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +30,7 @@ public class AtualizarMusicaUseCase {
         }
 
         final var musica = repository.acharPeloId(id)
-                .orElseThrow(() -> new RuntimeException("Música não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Música não encontrada."));
         validarPermissaoDeGerenciamento(musica);
 
         String caminhoDoArquivo = null;
@@ -47,13 +49,13 @@ public class AtualizarMusicaUseCase {
 
     private void validarPermissaoDeGerenciamento(final Musica musica) {
         final UUID usuarioId = auditorAware.getCurrentAuditor()
-                .orElseThrow(() -> new RuntimeException("Usuário não autenticado."));
+                .orElseThrow(() -> new NaoAutenticadoException("Usuário não autenticado."));
 
         if (usuarioId.equals(musica.getCriadoPor()) || possuiRoleElevada()) {
             return;
         }
 
-        throw new AccessDeniedException("Usuário não tem permissão para alterar esta música.");
+        throw new AcessoNegadoException("Usuário não tem permissão para alterar esta música.");
     }
 
     private boolean possuiRoleElevada() {

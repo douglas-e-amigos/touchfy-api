@@ -27,6 +27,7 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.AtualizarMusicaRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.musicas.CriarMusicaRequest;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 
 import lombok.AllArgsConstructor;
 
@@ -91,7 +92,7 @@ public class MusicaRepositoryImpl implements MusicaRepository {
     @Transactional(readOnly = true)
     public MusicaEntity acharEntidadePeloId(final UUID id) {
         return jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Música não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Música não encontrada."));
     }
 
     @Override
@@ -168,7 +169,7 @@ public class MusicaRepositoryImpl implements MusicaRepository {
 
         final List<TagEntity> tags = tagJpaRepository.findAllById(tagIds);
         if (tags.size() != tagIds.size()) {
-            throw new RuntimeException("Uma ou mais tags não foram encontradas.");
+            throw new RecursoNaoEncontradoException("Uma ou mais tags não foram encontradas.");
         }
 
         return tags;
@@ -181,7 +182,7 @@ public class MusicaRepositoryImpl implements MusicaRepository {
 
         final List<GeneroMusicalEntity> generosMusicais = generoMusicalJpaRepository.findAllById(generoMusicalIds);
         if (generosMusicais.size() != generoMusicalIds.size()) {
-            throw new RuntimeException("Um ou mais gêneros musicais não foram encontrados.");
+            throw new RecursoNaoEncontradoException("Um ou mais gêneros musicais não foram encontrados.");
         }
 
         return generosMusicais;

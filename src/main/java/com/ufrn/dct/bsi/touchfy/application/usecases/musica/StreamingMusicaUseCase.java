@@ -12,6 +12,7 @@ import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.BuscarArquivoUseCas
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoRecuperadoResponse;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 
 import lombok.AllArgsConstructor;
 
@@ -23,7 +24,7 @@ public class StreamingMusicaUseCase {
 
     public StreamingMusicaResponse execute(final UUID id, final String rangeHeader) {
         final Musica musica = musicaRepository.acharPeloId(id)
-                .orElseThrow(() -> new RuntimeException("Música não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Música não encontrada."));
 
         final ArquivoRecuperadoResponse arquivo = buscarArquivoUseCase.execute(musica.getCaminhoDoArquivo());
         final long tamanhoTotal = arquivo.conteudo().length;
