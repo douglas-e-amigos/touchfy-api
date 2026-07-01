@@ -11,12 +11,14 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class BuscarRolePorIdUseCase {
 
-    private final RoleRepository roleRepository;
-    private final RoleMapper roleMapper;
+  private final RoleRepository roleRepository;
+  private final RoleMapper roleMapper;
 
-    public RoleResponse execute(final Long id) {
-        final Role role = roleRepository.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o ID: " + id));
-        return roleMapper.toResponse(role);
-    }
+  public RoleResponse execute(final Long id) {
+    final Role role =
+        roleRepository
+            .buscarPorId(id)
+            .orElseThrow(() -> new RuntimeException("Perfil não encontrado para o ID: " + id));
+    return roleMapper.toResponse(role);
+  }
 }

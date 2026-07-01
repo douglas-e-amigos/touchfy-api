@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface GeneroMusicalMapper {
-    GeneroMusical toDomain(GeneroMusicalEntity entity);
+  GeneroMusical toDomain(GeneroMusicalEntity entity);
 
-    GeneroMusicalEntity toEntity(GeneroMusical domain);
+  GeneroMusicalEntity toEntity(GeneroMusical domain);
 }

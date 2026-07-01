@@ -8,14 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.UUID;
 
 @Entity
 @SQLRestriction("ativo = true")
@@ -26,15 +25,15 @@ import java.util.UUID;
 @Getter
 @Setter
 public class MusicaDaTagEntity extends AuditableEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_id", nullable = false)
-    private TagEntity tag;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "tag_id", nullable = false)
+  private TagEntity tag;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "musica_id", nullable = false)
-    private MusicaEntity musica;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "musica_id", nullable = false)
+  private MusicaEntity musica;
 }

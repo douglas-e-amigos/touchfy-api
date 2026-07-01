@@ -5,22 +5,23 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMap
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.UsuarioResponse;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor
 public class BuscarUsuarioUseCase {
-    private final UsuarioRepository usuarioRepository;
-    private final UsuarioMapper usuarioMapper;
+  private final UsuarioRepository usuarioRepository;
+  private final UsuarioMapper usuarioMapper;
 
-    public UsuarioResponse execute(final UUID idUsuario) {
-        final UsuarioEntity usuarioEntity = usuarioRepository.acharPeloId(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        final Usuario usuario = usuarioMapper.toDomain(usuarioEntity);
-        final UsuarioResponse response = usuarioMapper.toResponse(usuario);
-        return response;
-    }
+  public UsuarioResponse execute(final UUID idUsuario) {
+    final UsuarioEntity usuarioEntity =
+        usuarioRepository
+            .acharPeloId(idUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    final Usuario usuario = usuarioMapper.toDomain(usuarioEntity);
+    final UsuarioResponse response = usuarioMapper.toResponse(usuario);
+    return response;
+  }
 }

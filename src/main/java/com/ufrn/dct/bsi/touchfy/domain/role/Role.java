@@ -1,12 +1,15 @@
 package com.ufrn.dct.bsi.touchfy.domain.role;
 
 import com.ufrn.dct.bsi.touchfy.domain.permission.Permission;
-import lombok.*;
 import java.util.Set;
+import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
-    private Long id;
-    private ERole name;
-    private Set<Permission> permissions;
+  private Long id;
+  private ERole name;
+  private Set<Permission> permissions;
 }

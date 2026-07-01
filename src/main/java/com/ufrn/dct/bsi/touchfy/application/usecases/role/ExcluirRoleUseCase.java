@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ExcluirRoleUseCase {
 
-    private final RoleRepository roleRepository;
+  private final RoleRepository roleRepository;
 
-    public void execute(final Long id) {
-        if (!roleRepository.existePorId(id)) {
-            throw new RecursoNaoEncontradoException("Perfil não encontrado para o ID: " + id);
-        }
-        roleRepository.excluir(id);
+  public void execute(final Long id) {
+    if (!roleRepository.existePorId(id)) {
+      throw new RecursoNaoEncontradoException("Perfil não encontrado para o ID: " + id);
     }
+    roleRepository.excluir(id);
+  }
 }

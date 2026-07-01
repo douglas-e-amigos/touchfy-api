@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UsuarioDetalhesServiceImpl implements UserDetailsService {
-    private final UsuarioRepository usuarioRepository;
+  private final UsuarioRepository usuarioRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(final String username) {
-        final UsuarioEntity usuarioEntity = usuarioRepository.acharPeloNomeDeUsuario(username)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return UsuarioDetalhesImpl.builder().usuario(usuarioEntity).build();
-    }
+  @Override
+  public UserDetails loadUserByUsername(final String username) {
+    final UsuarioEntity usuarioEntity =
+        usuarioRepository
+            .acharPeloNomeDeUsuario(username)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    return UsuarioDetalhesImpl.builder().usuario(usuarioEntity).build();
+  }
 }

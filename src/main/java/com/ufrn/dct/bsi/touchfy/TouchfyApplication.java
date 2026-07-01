@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TouchfyApplication {
 
-	public static void main(final String[] args) {
-        SpringApplication.run(TouchfyApplication.class, args);
-	}
-
+  public static void main(final String[] args) {
+    SpringApplication.run(TouchfyApplication.class, args);
+  }
 }

@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface TagMapper {
-    Tag toDomain(TagEntity entity);
+  Tag toDomain(TagEntity entity);
 
-    TagEntity toEntity(Tag domain);
+  TagEntity toEntity(Tag domain);
 }

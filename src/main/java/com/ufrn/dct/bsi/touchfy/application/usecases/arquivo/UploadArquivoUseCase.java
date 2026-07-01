@@ -10,9 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class UploadArquivoUseCase {
 
-    private final FileStorageService fileStorageService;
+  private final FileStorageService fileStorageService;
 
-    public ArquivoArmazenamentoResponse execute(final MultipartFile file, final String subDirectory) {
-        return fileStorageService.store(file, subDirectory);
-    }
+  public ArquivoArmazenamentoResponse execute(final MultipartFile file, final String subDirectory) {
+    return fileStorageService.store(file, subDirectory);
+  }
 }

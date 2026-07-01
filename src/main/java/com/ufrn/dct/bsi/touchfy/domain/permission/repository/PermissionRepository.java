@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PermissionRepository {
-    Permission salvar(Permission permission);
-    Optional<Permission> buscarPorId(Long id);
-    List<Permission> listarTodos();
-    Permission atualizar(Permission permission);
-    void excluir(Long id);
-    boolean existePorId(Long id);
-    boolean existePorNome(String nome);
+  Permission salvar(Permission permission);
+
+  Optional<Permission> buscarPorId(Long id);
+
+  List<Permission> listarTodos();
+
+  Permission atualizar(Permission permission);
+
+  void excluir(Long id);
+
+  boolean existePorId(Long id);
+
+  boolean existePorNome(String nome);
 }

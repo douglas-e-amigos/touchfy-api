@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class PasswordMakerImpl implements PasswordMaker {
-    private final PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public String execute(final String password) {
-        return passwordEncoder.encode(password);
-    }
+  @Override
+  public String execute(final String password) {
+    return passwordEncoder.encode(password);
+  }
 }

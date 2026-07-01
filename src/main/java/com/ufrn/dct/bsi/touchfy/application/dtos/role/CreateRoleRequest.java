@@ -5,7 +5,4 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record CreateRoleRequest(
-        @NotNull(message = "O nome do perfil é obrigatório.")
-        ERole name,
-        List<Long> permissionIds
-) {}
+    @NotNull(message = "O nome do perfil é obrigatório.") ERole name, List<Long> permissionIds) {}
