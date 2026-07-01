@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.storage;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,10 +14,12 @@ import lombok.AllArgsConstructor;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.IntegracaoExternaException;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 
 @AllArgsConstructor
@@ -32,6 +35,7 @@ public class GarageFileStorageImpl implements FileStorageService {
         final String chave = subDirectory + "/" + UUID.randomUUID() +  "." + extensao;
 
         try {
+            final byte[] bytes = file.getBytes();
             final PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(chave)
@@ -39,9 +43,11 @@ public class GarageFileStorageImpl implements FileStorageService {
                     .contentLength(file.getSize())
                     .build();
 
-            s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
-        } catch (Exception e) {
-            throw new RuntimeException("Falha ao enviar o arquivo " + chave, e);
+            s3Client.putObject(request, RequestBody.fromBytes(bytes));
+        } catch (IOException e) {
+            throw new IntegracaoExternaException("Falha ao ler o arquivo " + chave, e);
+        } catch (S3Exception e) {
+            throw new IntegracaoExternaException("Falha ao enviar o arquivo " + chave, e);
         }
 
         return new ArquivoArmazenamentoResponse(
@@ -61,8 +67,8 @@ public class GarageFileStorageImpl implements FileStorageService {
                     .build();
 
             s3Client.deleteObject(deleteObjectRequest);
-        } catch (Exception e) {
-            throw new RuntimeException("Falha ao deletar o arquivo " + caminhoDoArquivo, e);
+        } catch (S3Exception e) {
+            throw new IntegracaoExternaException("Falha ao deletar o arquivo " + caminhoDoArquivo, e);
         }
     }
 
@@ -87,8 +93,8 @@ public class GarageFileStorageImpl implements FileStorageService {
                     response.response().contentType(),
                     response.asByteArray()
             );
-        } catch (Exception e) {
-            throw new RuntimeException("Falha ao buscar o arquivo " + caminhoDoArquivo, e);
+        } catch (S3Exception e) {
+            throw new IntegracaoExternaException("Falha ao buscar o arquivo " + caminhoDoArquivo, e);
         }
     }
 
