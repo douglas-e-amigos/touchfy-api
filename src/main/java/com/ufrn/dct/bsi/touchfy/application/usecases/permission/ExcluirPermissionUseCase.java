@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ExcluirPermissionUseCase {
 
-    private final PermissionRepository permissionRepository;
+  private final PermissionRepository permissionRepository;
 
-    public void execute(final Long id) {
-        if (!permissionRepository.existePorId(id)) {
-            throw new RecursoNaoEncontradoException("Permissão não encontrada para o ID: " + id);
-        }
-        permissionRepository.excluir(id);
+  public void execute(final Long id) {
+    if (!permissionRepository.existePorId(id)) {
+      throw new RecursoNaoEncontradoException("Permissão não encontrada para o ID: " + id);
     }
+    permissionRepository.excluir(id);
+  }
 }

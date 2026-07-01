@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class DeletarArquivoUseCase {
 
-    private final FileStorageService fileStorageService;
+  private final FileStorageService fileStorageService;
 
-    public void execute(final String caminhoDoArquivo) {
-        fileStorageService.delete(caminhoDoArquivo);
-    }
+  public void execute(final String caminhoDoArquivo) {
+    fileStorageService.delete(caminhoDoArquivo);
+  }
 }

@@ -8,10 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class Imagem {
-    private String nome;
-    private String caminhoDoArquivo;
-    private String extensao;
-    private Double tamanhoEmBytes;
-    private String textoAlternativo;
+  private String nome;
+  private String caminhoDoArquivo;
+  private String extensao;
+  private Double tamanhoEmBytes;
+  private String textoAlternativo;
 }
-

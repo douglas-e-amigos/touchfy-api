@@ -12,14 +12,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 public record AtualizarFotoPerfilUsuarioRequest(
-        @NotNull
+    @NotNull
         @Schema(type = "string", format = "binary")
-        @ExtensaoValida(value = {"jpg", "png", "jpeg"}, message = "A imagem precisa estar nos formatos: .jpg, .jpeg " +
-                "ou .png.")
-        @DimensoesImagemValida(dimensoes = DimensoesImagem.FOTO_DE_PERFIL,
-                message = "A imagem deve ter entre 300x300 e 720x720 pixels.")
-        @TamanhoArquivoValido(tamanhoArquivo = TamanhoArquivo.FOTO_DE_PERFIL, message = "A imagem deve pesar entre " +
-                "500KB e 10MB.")
-        MultipartFile foto
-) {
-}
+        @ExtensaoValida(
+            value = {"jpg", "png", "jpeg"},
+            message = "A imagem precisa estar nos formatos: .jpg, .jpeg " + "ou .png.")
+        @DimensoesImagemValida(
+            dimensoes = DimensoesImagem.FOTO_DE_PERFIL,
+            message = "A imagem deve ter entre 300x300 e 720x720 pixels.")
+        @TamanhoArquivoValido(
+            tamanhoArquivo = TamanhoArquivo.FOTO_DE_PERFIL,
+            message = "A imagem deve pesar entre " + "500KB e 10MB.")
+        MultipartFile foto) {}

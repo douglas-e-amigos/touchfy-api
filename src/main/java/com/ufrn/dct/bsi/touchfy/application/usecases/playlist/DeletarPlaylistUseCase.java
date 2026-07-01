@@ -3,24 +3,25 @@ package com.ufrn.dct.bsi.touchfy.application.usecases.playlist;
 import com.ufrn.dct.bsi.touchfy.domain.playlist.repositories.PlaylistRepository;
 import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
 import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor
 public class DeletarPlaylistUseCase {
-    private final PlaylistRepository repository;
+  private final PlaylistRepository repository;
 
-    public void execute(final UUID playlistId, final UUID usuarioId) {
-        final var playlist = repository.acharPeloId(playlistId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Playlist não encontrada."));
+  public void execute(final UUID playlistId, final UUID usuarioId) {
+    final var playlist =
+        repository
+            .acharPeloId(playlistId)
+            .orElseThrow(() -> new RecursoNaoEncontradoException("Playlist não encontrada."));
 
-        if (!playlist.getDonoId().equals(usuarioId)) {
-            throw new AcessoNegadoException("Usuário não autorizado a excluir esta playlist.");
-        }
-
-        repository.deletar(playlistId);
+    if (!playlist.getDonoId().equals(usuarioId)) {
+      throw new AcessoNegadoException("Usuário não autorizado a excluir esta playlist.");
     }
+
+    repository.deletar(playlistId);
+  }
 }

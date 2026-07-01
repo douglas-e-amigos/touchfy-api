@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class LogoutUseCase {
-    private final RefreshTokenRepository refreshTokenRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
 
-    public void execute(final String token) {
-        if (token == null) {
-            throw new NaoAutenticadoException("Token inválido");
-        }
-
-        refreshTokenRepository.revogar(token);
+  public void execute(final String token) {
+    if (token == null) {
+      throw new NaoAutenticadoException("Token inválido");
     }
+
+    refreshTokenRepository.revogar(token);
+  }
 }

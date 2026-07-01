@@ -4,22 +4,21 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEn
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
-
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UsuarioRepository {
-    UsuarioEntity salvar(Usuario usuario, ERole role);
+  UsuarioEntity salvar(Usuario usuario, ERole role);
 
-    Optional<UsuarioEntity> acharPeloNomeDeUsuario(final String nomeUsuario);
+  Optional<UsuarioEntity> acharPeloNomeDeUsuario(final String nomeUsuario);
 
-    Optional<UsuarioEntity> acharPeloId(final UUID id);
+  Optional<UsuarioEntity> acharPeloId(final UUID id);
 
-    void atualizarUsuarioParcialmente(final UUID id, final AtualizarUsuarioRequest request);
+  void atualizarUsuarioParcialmente(final UUID id, final AtualizarUsuarioRequest request);
 
-    void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil);
+  void atualizarFotoPerfilUsuario(final UsuarioEntity usuarioEntity, final String pathFotoPerfil);
 
-    Optional<Usuario> buscarPorNomeUsuario(final String nomeUsuario);
+  Optional<Usuario> buscarPorNomeUsuario(final String nomeUsuario);
 
-    void deletar(UUID id);
+  void deletar(UUID id);
 }

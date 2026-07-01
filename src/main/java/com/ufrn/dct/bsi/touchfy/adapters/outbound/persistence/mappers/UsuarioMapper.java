@@ -6,42 +6,45 @@ import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.CriarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.UsuarioResponse;
 import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
-
-import org.mapstruct.*;
-
 import java.util.List;
 import java.util.Set;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {ImagemMapper.class, EmailMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ImagemMapper.class, EmailMapper.class})
 public interface UsuarioMapper {
-    @Mapping(source = "caminhoDaImagemDePerfil", target = "imagem", qualifiedByName = "mapPathToImage")
-    Usuario toDomain(UsuarioEntity usuarioEntity);
+  @Mapping(
+      source = "caminhoDaImagemDePerfil",
+      target = "imagem",
+      qualifiedByName = "mapPathToImage")
+  Usuario toDomain(UsuarioEntity usuarioEntity);
 
-    @Mapping(source = "imagem", target = "caminhoDaImagemDePerfil", qualifiedByName = "mapImageToPath")
-    UsuarioEntity toEntity(Usuario usuario);
+  @Mapping(
+      source = "imagem",
+      target = "caminhoDaImagemDePerfil",
+      qualifiedByName = "mapImageToPath")
+  UsuarioEntity toEntity(Usuario usuario);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(AtualizarUsuarioRequest atualizarUsuarioRequest, @MappingTarget UsuarioEntity entity);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateEntity(
+      AtualizarUsuarioRequest atualizarUsuarioRequest, @MappingTarget UsuarioEntity entity);
 
-    @Mapping(target = "imagem",  ignore = true)
-    @Mapping(source = "email", target = "email", qualifiedByName = "mapValueToEmail")
-    Usuario toDomain(CriarUsuarioRequest request);
+  @Mapping(target = "imagem", ignore = true)
+  @Mapping(source = "email", target = "email", qualifiedByName = "mapValueToEmail")
+  Usuario toDomain(CriarUsuarioRequest request);
 
-    @Mapping(source = "email", target = "email", qualifiedByName = "mapEmailToValue")
-    @Mapping(source = "imagem", target = "fotoPerfil", qualifiedByName = "mapImageToPath")
-    @Mapping(source = "roles", target = "roles", qualifiedByName = "mapRolesToNames")
-    UsuarioResponse toResponse(Usuario usuario);
+  @Mapping(source = "email", target = "email", qualifiedByName = "mapEmailToValue")
+  @Mapping(source = "imagem", target = "fotoPerfil", qualifiedByName = "mapImageToPath")
+  @Mapping(source = "roles", target = "roles", qualifiedByName = "mapRolesToNames")
+  UsuarioResponse toResponse(Usuario usuario);
 
-    @Named("mapRolesToNames")
-    default List<String> mapRolesToNames(final Set<Role> roles) {
-        if (roles == null || roles.isEmpty()) {
-            return List.of();
-        }
-
-        return roles.stream()
-                .map(Role::getName)
-                .map(Enum::name)
-                .sorted()
-                .toList();
+  @Named("mapRolesToNames")
+  default List<String> mapRolesToNames(final Set<Role> roles) {
+    if (roles == null || roles.isEmpty()) {
+      return List.of();
     }
+
+    return roles.stream().map(Role::getName).map(Enum::name).sorted().toList();
+  }
 }

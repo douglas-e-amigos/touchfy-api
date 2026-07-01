@@ -10,36 +10,35 @@ import com.ufrn.dct.bsi.touchfy.domain.album.models.Album;
 import com.ufrn.dct.bsi.touchfy.domain.album.models.AlbumSalvo;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.GeneroMusical;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface AlbumMapper {
-    @Mapping(target = "musicas", source = "musicas")
-    @Mapping(target = "generoMusical", source = "generoMusical")
-    Album toDomain(AlbumEntity entity);
+  @Mapping(target = "musicas", source = "musicas")
+  @Mapping(target = "generoMusical", source = "generoMusical")
+  Album toDomain(AlbumEntity entity);
 
-    @Mapping(target = "musicas", source = "musicas")
-    @Mapping(target = "generoMusical", source = "generoMusical")
-    AlbumResponse toResponse(Album album);
+  @Mapping(target = "musicas", source = "musicas")
+  @Mapping(target = "generoMusical", source = "generoMusical")
+  AlbumResponse toResponse(Album album);
 
-    AlbumSalvo toSalvoDomain(AlbumSalvoEntity entity);
+  AlbumSalvo toSalvoDomain(AlbumSalvoEntity entity);
 
-    AlbumSalvoResponse toSalvoResponse(AlbumSalvo albumSalvo);
+  AlbumSalvoResponse toSalvoResponse(AlbumSalvo albumSalvo);
 
-    @Mapping(target = "id", source = "musica.id")
-    @Mapping(target = "nome", source = "musica.nome")
-    @Mapping(target = "caminhoDoArquivo", source = "musica.caminhoDoArquivo")
-    @Mapping(target = "letra", source = "musica.letra")
-    @Mapping(target = "tags", ignore = true)
-    @Mapping(target = "generosMusicais", ignore = true)
-    Musica toMusica(AlbumMusicaEntity entity);
+  @Mapping(target = "id", source = "musica.id")
+  @Mapping(target = "nome", source = "musica.nome")
+  @Mapping(target = "caminhoDoArquivo", source = "musica.caminhoDoArquivo")
+  @Mapping(target = "letra", source = "musica.letra")
+  @Mapping(target = "tags", ignore = true)
+  @Mapping(target = "generosMusicais", ignore = true)
+  Musica toMusica(AlbumMusicaEntity entity);
 
-    GeneroMusical toGeneroMusical(GeneroMusicalEntity entity);
+  GeneroMusical toGeneroMusical(GeneroMusicalEntity entity);
 
-    default List<AlbumSalvo> toSalvoDomainList(List<AlbumSalvoEntity> entities) {
-        return entities.stream().map(this::toSalvoDomain).toList();
-    }
+  default List<AlbumSalvo> toSalvoDomainList(List<AlbumSalvoEntity> entities) {
+    return entities.stream().map(this::toSalvoDomain).toList();
+  }
 }

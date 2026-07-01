@@ -3,64 +3,61 @@ package com.ufrn.dct.bsi.touchfy.domain.usuario.models;
 import com.ufrn.dct.bsi.touchfy.domain.role.Role;
 import com.ufrn.dct.bsi.touchfy.shared.models.Email;
 import com.ufrn.dct.bsi.touchfy.shared.models.Imagem;
-
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
 public class Usuario {
-    private UUID id;
-    private String nome;
-    private String nomeUsuario;
-    private String senha;
-    private Email email;
-    private Imagem imagem;
-    private Boolean emailVerificado;
-    private LocalDate dataNascimento;
-    private Set<Role> roles;
+  private UUID id;
+  private String nome;
+  private String nomeUsuario;
+  private String senha;
+  private Email email;
+  private Imagem imagem;
+  private Boolean emailVerificado;
+  private LocalDate dataNascimento;
+  private Set<Role> roles;
 
-    public Usuario(
-            final UUID id,
-            final String nome,
-            final String nomeUsuario,
-            final String senha,
-            final Email email,
-            final Imagem imagem,
-            final Boolean emailVerificado,
-            final LocalDate dataNascimento,
-            final Set<Role> roles
-    ) {
-        if (nome == null) {
-            throw new IllegalArgumentException("Nome é obrigatório");
-        }
-        if (nomeUsuario == null) {
-            throw new IllegalArgumentException("Nome de usuário é obrigatório");
-        }
-        if (senha == null) {
-            throw new IllegalArgumentException("Senha é obrigatória");
-        }
-        if (email == null) {
-            throw new IllegalArgumentException("E-mail é obrigatório");
-        }
-        if (dataNascimento == null) {
-            throw new IllegalArgumentException("Data nascimento é obrigatória");
-        }
-
-        this.id = id;
-        this.nome = nome;
-        this.nomeUsuario = nomeUsuario;
-        this.senha = senha;
-        this.email = email;
-        this.imagem = imagem;
-        this.emailVerificado = emailVerificado;
-        this.dataNascimento = dataNascimento;
-        this.roles = roles;
+  public Usuario(
+      final UUID id,
+      final String nome,
+      final String nomeUsuario,
+      final String senha,
+      final Email email,
+      final Imagem imagem,
+      final Boolean emailVerificado,
+      final LocalDate dataNascimento,
+      final Set<Role> roles) {
+    if (nome == null) {
+      throw new IllegalArgumentException("Nome é obrigatório");
     }
+    if (nomeUsuario == null) {
+      throw new IllegalArgumentException("Nome de usuário é obrigatório");
+    }
+    if (senha == null) {
+      throw new IllegalArgumentException("Senha é obrigatória");
+    }
+    if (email == null) {
+      throw new IllegalArgumentException("E-mail é obrigatório");
+    }
+    if (dataNascimento == null) {
+      throw new IllegalArgumentException("Data nascimento é obrigatória");
+    }
+
+    this.id = id;
+    this.nome = nome;
+    this.nomeUsuario = nomeUsuario;
+    this.senha = senha;
+    this.email = email;
+    this.imagem = imagem;
+    this.emailVerificado = emailVerificado;
+    this.dataNascimento = dataNascimento;
+    this.roles = roles;
+  }
 }

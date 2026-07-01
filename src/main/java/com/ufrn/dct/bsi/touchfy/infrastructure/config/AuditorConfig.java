@@ -5,6 +5,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAwareImpl")
-public class AuditorConfig {
-
-}
+public class AuditorConfig {}

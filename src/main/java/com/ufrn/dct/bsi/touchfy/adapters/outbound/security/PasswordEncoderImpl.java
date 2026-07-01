@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class PasswordEncoderImpl implements PasswordEncoder {
 
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+  private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    @Override
-    public Boolean matches(final String senhaPura, final String senhaCriptografada) {
-        return passwordEncoder.matches(senhaPura, senhaCriptografada);
-    }
+  @Override
+  public Boolean matches(final String senhaPura, final String senhaCriptografada) {
+    return passwordEncoder.matches(senhaPura, senhaCriptografada);
+  }
 }
