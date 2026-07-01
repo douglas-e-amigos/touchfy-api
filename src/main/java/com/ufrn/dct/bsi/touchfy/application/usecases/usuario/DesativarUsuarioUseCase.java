@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.security.UsuarioDetalhesImpl;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
 
 import lombok.AllArgsConstructor;
 
@@ -22,17 +24,17 @@ public class DesativarUsuarioUseCase {
         if (authentication == null
                 || !authentication.isAuthenticated()
                 || "anonymousUser".equals(authentication.getPrincipal())) {
-            throw new RuntimeException("Usuário não autenticado");
+            throw new NaoAutenticadoException("Usuário não autenticado");
         }
 
         final Object principal = authentication.getPrincipal();
 
         if (!(principal instanceof UsuarioDetalhesImpl usuarioDetalhes)) {
-            throw new RuntimeException("Usuário não autenticado");
+            throw new NaoAutenticadoException("Usuário não autenticado");
         }
 
         if (!usuarioDetalhes.getId().equals(idUsuario)) {
-            throw new RuntimeException("Usuário não autorizado a desativar esta conta");
+            throw new AcessoNegadoException("Usuário não autorizado a desativar esta conta");
         }
 
         usuarioRepository.deletar(idUsuario);

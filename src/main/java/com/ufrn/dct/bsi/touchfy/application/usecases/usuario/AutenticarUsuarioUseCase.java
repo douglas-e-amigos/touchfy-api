@@ -7,6 +7,8 @@ import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.RefreshTokenRepository
 import com.ufrn.dct.bsi.touchfy.domain.usuario.repository.UsuarioRepository;
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.PasswordEncoder;
 import com.ufrn.dct.bsi.touchfy.infrastructure.security.TokenService;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,10 +25,10 @@ public class AutenticarUsuarioUseCase {
 
     public TokenResponse execute(final String nomeUsuario, final String senhaUsuario) {
         final var usuarioEntity = usuarioRepository.acharPeloNomeDeUsuario(nomeUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
 
         if (!passwordEncoder.matches(senhaUsuario, usuarioEntity.getSenha())) {
-            throw new RuntimeException("Credenciais inválidas");
+            throw new NaoAutenticadoException("Credenciais inválidas");
         }
 
         final Usuario usuario = usuarioMapper.toDomain(usuarioEntity);
