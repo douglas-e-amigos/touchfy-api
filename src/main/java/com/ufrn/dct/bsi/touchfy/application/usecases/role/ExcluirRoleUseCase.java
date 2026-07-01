@@ -1,6 +1,7 @@
 package com.ufrn.dct.bsi.touchfy.application.usecases.role;
 
 import com.ufrn.dct.bsi.touchfy.domain.role.repository.RoleRepository;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.RecursoNaoEncontradoException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ public class ExcluirRoleUseCase {
 
     public void execute(final Long id) {
         if (!roleRepository.existePorId(id)) {
-            throw new RuntimeException("Perfil não encontrado para o ID: " + id);
+            throw new RecursoNaoEncontradoException("Perfil não encontrado para o ID: " + id);
         }
         roleRepository.excluir(id);
     }
