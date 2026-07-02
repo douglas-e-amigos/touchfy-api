@@ -43,6 +43,9 @@ public class UsuarioEntity extends AuditableEntity {
   @Column(name = "data_nascimento", nullable = false)
   private LocalDate dataNascimento;
 
+  @Column(name = "descricao", length = 1000)
+  private String descricao;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_roles",
