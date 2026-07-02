@@ -18,7 +18,7 @@ class ListarAlbunsUseCaseTest {
     final AlbumMapper mapper = mock(AlbumMapper.class);
     final ListarAlbunsUseCase useCase = new ListarAlbunsUseCase(repository, mapper);
     final var album =
-        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), List.of());
+        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), null, List.of());
 
     when(repository.listar()).thenReturn(List.of(album));
 

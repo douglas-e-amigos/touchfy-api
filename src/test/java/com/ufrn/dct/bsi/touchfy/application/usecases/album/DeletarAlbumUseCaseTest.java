@@ -18,7 +18,7 @@ class DeletarAlbumUseCaseTest {
     final DeletarAlbumUseCase useCase = new DeletarAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
     final UUID artistaId = UUID.randomUUID();
-    final var album = new Album(albumId, "Nome", null, null, null, artistaId, List.of());
+    final var album = new Album(albumId, "Nome", null, null, null, artistaId, null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
 
@@ -32,7 +32,8 @@ class DeletarAlbumUseCaseTest {
     final AlbumRepository repository = mock(AlbumRepository.class);
     final DeletarAlbumUseCase useCase = new DeletarAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
-    final var album = new Album(albumId, "Nome", null, null, null, UUID.randomUUID(), List.of());
+    final var album =
+        new Album(albumId, "Nome", null, null, null, UUID.randomUUID(), null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
 

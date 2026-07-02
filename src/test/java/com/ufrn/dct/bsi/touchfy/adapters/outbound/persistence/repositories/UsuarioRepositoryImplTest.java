@@ -52,6 +52,7 @@ class UsuarioRepositoryImplTest {
         null,
         false,
         LocalDate.now(),
+        null,
         Set.of());
   }
 

@@ -12,7 +12,7 @@ class AlbumSalvoTest {
     final var id = UUID.randomUUID();
     final var usuarioId = UUID.randomUUID();
     final var album =
-        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), null);
+        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), null, null);
     final var salvo = new AlbumSalvo(id, album, usuarioId);
 
     assertEquals(id, salvo.getId());
@@ -27,7 +27,7 @@ class AlbumSalvoTest {
         () ->
             new AlbumSalvo(
                 null,
-                new Album(UUID.randomUUID(), "A", null, null, null, UUID.randomUUID(), null),
+                new Album(UUID.randomUUID(), "A", null, null, null, UUID.randomUUID(), null, null),
                 UUID.randomUUID()));
   }
 
@@ -45,7 +45,7 @@ class AlbumSalvoTest {
         () ->
             new AlbumSalvo(
                 UUID.randomUUID(),
-                new Album(UUID.randomUUID(), "A", null, null, null, UUID.randomUUID(), null),
+                new Album(UUID.randomUUID(), "A", null, null, null, UUID.randomUUID(), null, null),
                 null));
   }
 }

@@ -145,6 +145,7 @@ class TokenServiceImplTest {
         null,
         Boolean.TRUE,
         LocalDate.now(),
+        null,
         Set.of());
   }
 }

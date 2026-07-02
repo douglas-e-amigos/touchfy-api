@@ -21,7 +21,7 @@ class ListarAlbunsSalvosUseCaseTest {
     final ListarAlbunsSalvosUseCase useCase = new ListarAlbunsSalvosUseCase(repository, mapper);
     final UUID usuarioId = UUID.randomUUID();
     final var album =
-        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), null);
+        new Album(UUID.randomUUID(), "Album", null, null, null, UUID.randomUUID(), null, null);
     final var salvo = new AlbumSalvo(UUID.randomUUID(), album, usuarioId);
 
     when(repository.listarSalvos(usuarioId)).thenReturn(List.of(salvo));

@@ -19,7 +19,7 @@ class AdicionarMusicaAlbumUseCaseTest {
     final UUID albumId = UUID.randomUUID();
     final UUID musicaId = UUID.randomUUID();
     final UUID artistaId = UUID.randomUUID();
-    final var album = new Album(albumId, "Album", null, null, null, artistaId, List.of());
+    final var album = new Album(albumId, "Album", null, null, null, artistaId, null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
     when(repository.existeMusicaNoAlbum(albumId, musicaId)).thenReturn(false);
@@ -36,7 +36,7 @@ class AdicionarMusicaAlbumUseCaseTest {
     final UUID albumId = UUID.randomUUID();
     final UUID musicaId = UUID.randomUUID();
     final UUID artistaId = UUID.randomUUID();
-    final var album = new Album(albumId, "Album", null, null, null, artistaId, List.of());
+    final var album = new Album(albumId, "Album", null, null, null, artistaId, null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
     when(repository.existeMusicaNoAlbum(albumId, musicaId)).thenReturn(true);
@@ -49,7 +49,8 @@ class AdicionarMusicaAlbumUseCaseTest {
     final AlbumRepository repository = mock(AlbumRepository.class);
     final AdicionarMusicaAlbumUseCase useCase = new AdicionarMusicaAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
-    final var album = new Album(albumId, "Album", null, null, null, UUID.randomUUID(), List.of());
+    final var album =
+        new Album(albumId, "Album", null, null, null, UUID.randomUUID(), null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
 

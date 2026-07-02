@@ -18,7 +18,8 @@ class SalvarAlbumUseCaseTest {
     final SalvarAlbumUseCase useCase = new SalvarAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
     final UUID usuarioId = UUID.randomUUID();
-    final var album = new Album(albumId, "Album", null, null, null, UUID.randomUUID(), List.of());
+    final var album =
+        new Album(albumId, "Album", null, null, null, UUID.randomUUID(), null, List.of());
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
     when(repository.existeAlbumSalvo(albumId, usuarioId)).thenReturn(false);

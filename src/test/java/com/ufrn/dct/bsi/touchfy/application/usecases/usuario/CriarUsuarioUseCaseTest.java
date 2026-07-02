@@ -44,6 +44,7 @@ class CriarUsuarioUseCaseTest {
         null,
         false,
         LocalDate.now(),
+        null,
         Set.of());
   }
 
