@@ -72,6 +72,18 @@ public class GlobalExceptionHandler {
     return buildResponse(HttpStatus.BAD_REQUEST, mensagem, exception, request);
   }
 
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<ErroResponse> handleRuntime(
+      final RuntimeException exception, final HttpServletRequest request) {
+    final String msg = exception.getMessage();
+
+    if (msg != null && msg.toLowerCase().startsWith("conflito:")) {
+      return buildResponse(HttpStatus.CONFLICT, msg, exception, request);
+    }
+
+    throw exception;
+  }
+
   @ExceptionHandler(ResponseStatusException.class)
   public ResponseEntity<ErroResponse> handleResponseStatus(
       final ResponseStatusException exception, final HttpServletRequest request) {
