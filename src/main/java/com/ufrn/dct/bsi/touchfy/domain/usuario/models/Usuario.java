@@ -22,6 +22,7 @@ public class Usuario {
   private Imagem imagem;
   private Boolean emailVerificado;
   private LocalDate dataNascimento;
+  private String descricao;
   private Set<Role> roles;
 
   public Usuario(
@@ -33,6 +34,7 @@ public class Usuario {
       final Imagem imagem,
       final Boolean emailVerificado,
       final LocalDate dataNascimento,
+      final String descricao,
       final Set<Role> roles) {
     if (nome == null) {
       throw new IllegalArgumentException("Nome é obrigatório");
@@ -58,6 +60,7 @@ public class Usuario {
     this.imagem = imagem;
     this.emailVerificado = emailVerificado;
     this.dataNascimento = dataNascimento;
+    this.descricao = descricao;
     this.roles = roles;
   }
 }
