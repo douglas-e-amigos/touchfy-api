@@ -19,6 +19,7 @@ public class Album {
   private LocalDate dataLancamento;
   private GeneroMusical generoMusical;
   private UUID artistaId;
+  private TipoAlbum tipo;
   private List<Musica> musicas;
 
   public Album(
@@ -28,6 +29,7 @@ public class Album {
       final LocalDate dataLancamento,
       final GeneroMusical generoMusical,
       final UUID artistaId,
+      final TipoAlbum tipo,
       final List<Musica> musicas) {
     if (id == null) {
       throw new IllegalArgumentException("ID é obrigatório");
@@ -45,6 +47,7 @@ public class Album {
     this.dataLancamento = dataLancamento;
     this.generoMusical = generoMusical;
     this.artistaId = artistaId;
+    this.tipo = tipo;
     this.musicas = musicas == null ? List.of() : musicas;
   }
 }

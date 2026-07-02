@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.ufrn.dct.bsi.touchfy.application.dtos.album.CriarAlbumRequest;
+import com.ufrn.dct.bsi.touchfy.domain.album.models.TipoAlbum;
 import com.ufrn.dct.bsi.touchfy.domain.album.repositories.AlbumRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class CriarAlbumUseCaseTest {
     final AlbumRepository repository = mock(AlbumRepository.class);
     final CriarAlbumUseCase useCase = new CriarAlbumUseCase(repository);
     final UUID usuarioId = UUID.randomUUID();
-    final var request = new CriarAlbumRequest("Meu Álbum", "Desc", null, null);
+    final var request = new CriarAlbumRequest("Meu Álbum", "Desc", null, null, TipoAlbum.ALBUM);
 
     useCase.execute(request, usuarioId);
 
@@ -31,7 +32,9 @@ class CriarAlbumUseCaseTest {
 
     assertThrows(
         IllegalArgumentException.class,
-        () -> useCase.execute(new CriarAlbumRequest("", null, null, null), UUID.randomUUID()));
+        () ->
+            useCase.execute(
+                new CriarAlbumRequest("", null, null, null, TipoAlbum.ALBUM), UUID.randomUUID()));
   }
 
   @Test

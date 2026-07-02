@@ -20,10 +20,11 @@ class BuscarAlbumUseCaseTest {
     final AlbumMapper mapper = mock(AlbumMapper.class);
     final BuscarAlbumUseCase useCase = new BuscarAlbumUseCase(repository, mapper);
     final UUID albumId = UUID.randomUUID();
-    final var album = new Album(albumId, "Album", null, null, null, UUID.randomUUID(), List.of());
+    final var album =
+        new Album(albumId, "Album", null, null, null, UUID.randomUUID(), null, List.of());
     final var response =
         new AlbumResponse(
-            albumId, "Album", null, null, null, UUID.randomUUID(), List.of(), null, null);
+            albumId, "Album", null, null, null, UUID.randomUUID(), null, List.of(), null, null);
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
     when(mapper.toResponse(album)).thenReturn(response);

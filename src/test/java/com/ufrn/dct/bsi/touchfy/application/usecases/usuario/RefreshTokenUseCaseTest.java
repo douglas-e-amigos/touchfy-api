@@ -211,6 +211,7 @@ class RefreshTokenUseCaseTest {
         null,
         true,
         LocalDate.now(),
+        null,
         Set.of());
   }
 }

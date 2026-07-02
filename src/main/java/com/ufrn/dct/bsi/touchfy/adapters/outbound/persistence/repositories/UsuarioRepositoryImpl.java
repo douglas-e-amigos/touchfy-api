@@ -5,6 +5,7 @@ import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities.UsuarioEn
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.mappers.UsuarioMapper;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.RoleJpaRepository;
 import com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.repositories.jpa.UsuarioJpaRepository;
+import com.ufrn.dct.bsi.touchfy.application.dtos.artista.AtualizarDadosArtistaRequest;
 import com.ufrn.dct.bsi.touchfy.application.dtos.usuario.AtualizarUsuarioRequest;
 import com.ufrn.dct.bsi.touchfy.domain.role.ERole;
 import com.ufrn.dct.bsi.touchfy.domain.usuario.models.Usuario;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @AllArgsConstructor
@@ -81,5 +83,52 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
               auditorAware.getCurrentAuditor().ifPresent(entity::setDeletadoPor);
               jpaRepository.save(entity);
             });
+  }
+
+  @Override
+  @Transactional
+  public void adicionarRole(final UUID usuarioId, final ERole role) {
+    final var entity =
+        jpaRepository
+            .findById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    final var roleEntity =
+        roleJpaRepository
+            .findByName(role)
+            .orElseThrow(() -> new RuntimeException("Role não encontrada: " + role));
+    entity.getRoles().add(roleEntity);
+    jpaRepository.save(entity);
+  }
+
+  @Override
+  @Transactional
+  public void removerRole(final UUID usuarioId, final ERole role) {
+    final var entity =
+        jpaRepository
+            .findById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    final var roleEntity =
+        roleJpaRepository
+            .findByName(role)
+            .orElseThrow(() -> new RuntimeException("Role não encontrada: " + role));
+    entity.getRoles().remove(roleEntity);
+    jpaRepository.save(entity);
+  }
+
+  @Override
+  @Transactional
+  public void atualizarDadosArtista(final UUID id, final AtualizarDadosArtistaRequest request) {
+    final var entity =
+        jpaRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    if (request.nome() != null) {
+      entity.setNome(request.nome());
+    }
+    if (request.descricao() != null) {
+      entity.setDescricao(request.descricao());
+    }
+
+    jpaRepository.save(entity);
   }
 }

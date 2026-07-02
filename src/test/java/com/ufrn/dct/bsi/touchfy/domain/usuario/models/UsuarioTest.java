@@ -31,6 +31,7 @@ class UsuarioTest {
             null,
             false,
             dataValida(),
+            null,
             Set.of());
 
     assertEquals("Nome", usuario.getNome());
@@ -45,7 +46,16 @@ class UsuarioTest {
         IllegalArgumentException.class,
         () ->
             new Usuario(
-                null, null, "user", "senha", emailValido(), null, false, dataValida(), Set.of()));
+                null,
+                null,
+                "user",
+                "senha",
+                emailValido(),
+                null,
+                false,
+                dataValida(),
+                null,
+                Set.of()));
   }
 
   @Test
@@ -54,7 +64,16 @@ class UsuarioTest {
         IllegalArgumentException.class,
         () ->
             new Usuario(
-                null, "Nome", null, "senha", emailValido(), null, false, dataValida(), Set.of()));
+                null,
+                "Nome",
+                null,
+                "senha",
+                emailValido(),
+                null,
+                false,
+                dataValida(),
+                null,
+                Set.of()));
   }
 
   @Test
@@ -63,7 +82,16 @@ class UsuarioTest {
         IllegalArgumentException.class,
         () ->
             new Usuario(
-                null, "Nome", "user", null, emailValido(), null, false, dataValida(), Set.of()));
+                null,
+                "Nome",
+                "user",
+                null,
+                emailValido(),
+                null,
+                false,
+                dataValida(),
+                null,
+                Set.of()));
   }
 
   @Test
@@ -71,7 +99,8 @@ class UsuarioTest {
     assertThrows(
         IllegalArgumentException.class,
         () ->
-            new Usuario(null, "Nome", "user", "senha", null, null, false, dataValida(), Set.of()));
+            new Usuario(
+                null, "Nome", "user", "senha", null, null, false, dataValida(), null, Set.of()));
   }
 
   @Test
@@ -79,6 +108,7 @@ class UsuarioTest {
     assertThrows(
         IllegalArgumentException.class,
         () ->
-            new Usuario(null, "Nome", "user", "senha", emailValido(), null, false, null, Set.of()));
+            new Usuario(
+                null, "Nome", "user", "senha", emailValido(), null, false, null, null, Set.of()));
   }
 }

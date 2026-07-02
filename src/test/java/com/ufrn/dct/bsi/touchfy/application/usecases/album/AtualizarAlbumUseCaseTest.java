@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.ufrn.dct.bsi.touchfy.application.dtos.album.AtualizarAlbumRequest;
 import com.ufrn.dct.bsi.touchfy.domain.album.models.Album;
+import com.ufrn.dct.bsi.touchfy.domain.album.models.TipoAlbum;
 import com.ufrn.dct.bsi.touchfy.domain.album.repositories.AlbumRepository;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,9 @@ class AtualizarAlbumUseCaseTest {
     final AtualizarAlbumUseCase useCase = new AtualizarAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
     final UUID artistaId = UUID.randomUUID();
-    final var album = new Album(albumId, "Nome", null, null, null, artistaId, List.of());
-    final var request = new AtualizarAlbumRequest("Novo Nome", "Nova Desc", null, null);
+    final var album = new Album(albumId, "Nome", null, null, null, artistaId, null, List.of());
+    final var request =
+        new AtualizarAlbumRequest("Novo Nome", "Nova Desc", null, null, TipoAlbum.ALBUM);
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
 
@@ -34,8 +36,9 @@ class AtualizarAlbumUseCaseTest {
     final AlbumRepository repository = mock(AlbumRepository.class);
     final AtualizarAlbumUseCase useCase = new AtualizarAlbumUseCase(repository);
     final UUID albumId = UUID.randomUUID();
-    final var album = new Album(albumId, "Nome", null, null, null, UUID.randomUUID(), List.of());
-    final var request = new AtualizarAlbumRequest("Nome", null, null, null);
+    final var album =
+        new Album(albumId, "Nome", null, null, null, UUID.randomUUID(), null, List.of());
+    final var request = new AtualizarAlbumRequest("Nome", null, null, null, TipoAlbum.ALBUM);
 
     when(repository.acharPeloId(albumId)).thenReturn(Optional.of(album));
 

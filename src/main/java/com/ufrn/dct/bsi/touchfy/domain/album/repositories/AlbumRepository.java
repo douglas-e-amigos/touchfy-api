@@ -19,6 +19,8 @@ public interface AlbumRepository {
 
   List<Album> listar();
 
+  List<Album> listarPorArtista(UUID artistaId);
+
   void adicionarMusica(UUID albumId, UUID musicaId, Integer ordem);
 
   boolean existeMusicaNoAlbum(UUID albumId, UUID musicaId);

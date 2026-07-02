@@ -116,6 +116,7 @@ class RefreshTokenRepositoryImplTest {
         null,
         true,
         LocalDate.now(),
+        null,
         Set.of());
   }
 

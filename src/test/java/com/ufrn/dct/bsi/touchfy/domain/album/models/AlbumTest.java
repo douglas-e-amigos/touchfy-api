@@ -16,7 +16,8 @@ class AlbumTest {
     final var artistaId = UUID.randomUUID();
     final var genero = new GeneroMusical(UUID.randomUUID(), "Rock");
     final var album =
-        new Album(id, "Meu Álbum", "Desc", LocalDate.of(2026, 12, 1), genero, artistaId, List.of());
+        new Album(
+            id, "Meu Álbum", "Desc", LocalDate.of(2026, 12, 1), genero, artistaId, null, List.of());
 
     assertEquals(id, album.getId());
     assertEquals("Meu Álbum", album.getNome());
@@ -28,34 +29,37 @@ class AlbumTest {
   void deveLancarExcecaoQuandoIdForNulo() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Album(null, "Nome", null, null, null, UUID.randomUUID(), List.of()));
+        () -> new Album(null, "Nome", null, null, null, UUID.randomUUID(), null, List.of()));
   }
 
   @Test
   void deveLancarExcecaoQuandoNomeForNulo() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Album(UUID.randomUUID(), null, null, null, null, UUID.randomUUID(), List.of()));
+        () ->
+            new Album(
+                UUID.randomUUID(), null, null, null, null, UUID.randomUUID(), null, List.of()));
   }
 
   @Test
   void deveLancarExcecaoQuandoNomeForVazio() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Album(UUID.randomUUID(), "", null, null, null, UUID.randomUUID(), List.of()));
+        () ->
+            new Album(UUID.randomUUID(), "", null, null, null, UUID.randomUUID(), null, List.of()));
   }
 
   @Test
   void deveLancarExcecaoQuandoArtistaForNulo() {
     assertThrows(
         IllegalArgumentException.class,
-        () -> new Album(UUID.randomUUID(), "Nome", null, null, null, null, List.of()));
+        () -> new Album(UUID.randomUUID(), "Nome", null, null, null, null, null, List.of()));
   }
 
   @Test
   void deveInicializarMusicasComoListaVaziaQuandoNulo() {
     final var album =
-        new Album(UUID.randomUUID(), "Nome", null, null, null, UUID.randomUUID(), null);
+        new Album(UUID.randomUUID(), "Nome", null, null, null, UUID.randomUUID(), null, null);
     assertNotNull(album.getMusicas());
     assertTrue(album.getMusicas().isEmpty());
   }
