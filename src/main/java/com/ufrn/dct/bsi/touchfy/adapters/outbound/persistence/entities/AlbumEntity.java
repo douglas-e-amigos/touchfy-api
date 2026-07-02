@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.adapters.outbound.persistence.entities;
 
+import com.ufrn.dct.bsi.touchfy.domain.album.models.TipoAlbum;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,6 +41,10 @@ public class AlbumEntity extends AuditableEntity {
 
   @Column(name = "artista_id", nullable = false)
   private UUID artistaId;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "tipo", length = 20)
+  private TipoAlbum tipo;
 
   @lombok.Builder.Default
   @OneToMany(
