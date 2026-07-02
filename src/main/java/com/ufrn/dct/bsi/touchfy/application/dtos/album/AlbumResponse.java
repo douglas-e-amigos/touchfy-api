@@ -1,5 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.application.dtos.album;
 
+import com.ufrn.dct.bsi.touchfy.domain.album.models.TipoAlbum;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.GeneroMusical;
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public record AlbumResponse(
     LocalDate dataLancamento,
     GeneroMusical generoMusical,
     UUID artistaId,
+    TipoAlbum tipo,
     List<Musica> musicas,
     LocalDateTime criadoEm,
     LocalDateTime atualizadoEm) {}
