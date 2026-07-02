@@ -45,7 +45,8 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         AlbumEntity.builder()
             .nome(request.nome())
             .descricao(request.descricao())
-            .artistaId(artistaId);
+            .artistaId(artistaId)
+            .tipo(request.tipo());
 
     if (request.dataLancamento() != null) {
       if (request.dataLancamento().isBefore(LocalDate.now())) {
@@ -72,6 +73,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
     final var entity = acharEntidadePeloId(id);
     entity.setNome(request.nome());
     entity.setDescricao(request.descricao());
+    entity.setTipo(request.tipo());
 
     if (request.dataLancamento() != null) {
       if (request.dataLancamento().isBefore(LocalDate.now())) {
@@ -118,6 +120,12 @@ public class AlbumRepositoryImpl implements AlbumRepository {
   @Transactional(readOnly = true)
   public List<Album> listar() {
     return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<Album> listarPorArtista(final UUID artistaId) {
+    return jpaRepository.findByArtistaId(artistaId).stream().map(mapper::toDomain).toList();
   }
 
   @Override
