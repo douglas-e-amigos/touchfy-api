@@ -47,3 +47,6 @@ storage:
   secret-key: "d33618b7c7922a30373b8051258393fabf6a805fa16caa9c9dd49e4b828513a7"
   bucket-name: touchfy-uploads
   bucket-url: http://garage:3900/touchfy-uploads
+
+app:
+  frontend-base-url: http://localhost:3000
