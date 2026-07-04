@@ -1,8 +1,151 @@
-CREATE TABLE IF NOT EXISTS musica(
+-- ===================================================
+-- MÓDULO DE USUÁRIOS
+-- ===================================================
+
+CREATE TABLE usuario(
+    id UUID PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    nome_usuario VARCHAR(200) UNIQUE NOT NULL,
+    descricao TEXT,
+    senha VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    email_verificado BOOLEAN DEFAULT FALSE,
+    data_nascimento DATE NOT NULL,
+    caminho_da_foto_de_perfil VARCHAR(255),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL
+);
+
+CREATE INDEX idx_usuario_email ON usuario(email);
+CREATE INDEX idx_usuario_nome_usuario ON usuario(nome_usuario);
+CREATE INDEX idx_usuario_criado_por ON usuario(criado_por);
+
+-- ===================================================
+-- MÓDULO DE RBAC
+-- ===================================================
+
+CREATE TABLE permissions(
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE roles(
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE roles_permissions(
+    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id BIGINT NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
+);
+
+CREATE TABLE user_role(
+    user_id UUID NOT NULL REFERENCES usuario(id),
+    role_id BIGINT NOT NULL REFERENCES roles(id),
+    PRIMARY KEY (user_id, role_id)
+);
+
+-- ===================================================
+-- MÓDULO DE USUÁRIOS CONTINUAÇÃO
+-- ===================================================
+
+CREATE TABLE usuario_bloquado(
+    id UUID PRIMARY KEY,
+    usuario_id UUID NOT NULL REFERENCES usuario(id),
+    usuario_bloqueado_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL,
+    CHECK (usuario_id <> usuario_bloqueado_id)
+);
+
+CREATE INDEX idx_usuario_bloquado_usuario_id ON usuario_bloquado(usuario_id);
+CREATE INDEX idx_usuario_bloquado_bloqueado_id ON usuario_bloquado(usuario_bloqueado_id);
+
+-- ===================================================
+-- MÓDULO DE ARTISTAS
+-- ===================================================
+
+CREATE TABLE artista_seguidor (
+    id UUID PRIMARY KEY,
+    artista_id UUID NOT NULL REFERENCES usuario(id),
+    usuario_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL,
+    CONSTRAINT uq_artista_seguidor UNIQUE (artista_id, usuario_id),
+    CONSTRAINT ck_artista_seguidor_nao_e_o_proprio CHECK (artista_id <> usuario_id)
+);
+
+CREATE INDEX idx_artista_seguidor_artista_id ON artista_seguidor(artista_id);
+CREATE INDEX idx_artista_seguidor_usuario_id ON artista_seguidor(usuario_id);
+
+CREATE TABLE artista_bloqueado (
+    id UUID PRIMARY KEY,
+    artista_id UUID NOT NULL REFERENCES usuario(id),
+    usuario_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL,
+    CONSTRAINT uq_artista_bloqueado UNIQUE (artista_id, usuario_id),
+    CONSTRAINT ck_artista_bloqueado_nao_e_o_proprio CHECK (artista_id <> usuario_id)
+);
+
+CREATE INDEX idx_artista_bloqueado_artista_id ON artista_bloqueado(artista_id);
+CREATE INDEX idx_artista_bloqueado_usuario_id ON artista_bloqueado(usuario_id);
+
+-- ===================================================
+-- MÓDULO DE MÚSICAS
+-- ===================================================
+
+CREATE TABLE genero_musical(
+    id UUID PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL
+);
+
+CREATE TABLE tag(
+    id UUID PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL
+);
+
+CREATE TABLE musica(
     id UUID PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     caminho_do_arquivo VARCHAR(255) NOT NULL,
     letra TEXT,
+    ativo BOOLEAN DEFAULT TRUE,
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
@@ -11,9 +154,52 @@ CREATE TABLE IF NOT EXISTS musica(
     deletado_por UUID DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tag(
+CREATE INDEX idx_musica_criado_por ON musica(criado_por);
+CREATE INDEX idx_musica_nome ON musica(nome);
+
+CREATE TABLE genero_da_musica(
+    id UUID PRIMARY KEY,
+    genero_musical_id UUID NOT NULL REFERENCES genero_musical(id),
+    musica_id UUID NOT NULL REFERENCES musica(id),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL
+);
+
+CREATE INDEX idx_genero_da_musica_musica_id ON genero_da_musica(musica_id);
+CREATE INDEX idx_genero_da_musica_genero_id ON genero_da_musica(genero_musical_id);
+
+CREATE TABLE musica_da_tag(
+    id UUID PRIMARY KEY,
+    tag_id UUID NOT NULL REFERENCES tag(id),
+    musica_id UUID NOT NULL REFERENCES musica(id),
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL
+);
+
+CREATE INDEX idx_musica_da_tag_musica_id ON musica_da_tag(musica_id);
+CREATE INDEX idx_musica_da_tag_tag_id ON musica_da_tag(tag_id);
+
+-- ===================================================
+-- MÓDULO DE PLAYLIST
+-- ===================================================
+
+CREATE TABLE playlist (
     id UUID PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    visibilidade VARCHAR(20) NOT NULL,
+    dono_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
@@ -22,9 +208,45 @@ CREATE TABLE IF NOT EXISTS tag(
     deletado_por UUID DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS genero_musical(
+CREATE INDEX idx_playlist_dono_id ON playlist(dono_id);
+
+CREATE TABLE playlist_musica (
+    id UUID PRIMARY KEY,
+    playlist_id UUID NOT NULL REFERENCES playlist(id),
+    musica_id UUID NOT NULL REFERENCES musica(id),
+    ordem INTEGER NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    criado_em TIMESTAMP,
+    atualizado_em TIMESTAMP,
+    deletado_em TIMESTAMP DEFAULT NULL,
+    criado_por UUID,
+    atualizado_por UUID,
+    deletado_por UUID DEFAULT NULL,
+    CONSTRAINT uq_playlist_musica UNIQUE (playlist_id, musica_id)
+);
+
+CREATE INDEX idx_playlist_musica_playlist_id ON playlist_musica(playlist_id);
+CREATE INDEX idx_playlist_musica_ordem ON playlist_musica(playlist_id, ordem);
+
+CREATE TABLE playlist_usuarios_convidados (
+    playlist_id UUID NOT NULL REFERENCES playlist(id) ON DELETE CASCADE,
+    usuario_id UUID NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+    PRIMARY KEY (playlist_id, usuario_id)
+);
+
+-- ===================================================
+-- MÓDULO DE ÁLBUM
+-- ===================================================
+
+CREATE TABLE album (
     id UUID PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    tipo VARCHAR(20) NOT NULL DEFAULT 'ALBUM',
+    data_lancamento DATE,
+    genero_musical_id UUID REFERENCES genero_musical(id),
+    artista_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
@@ -33,30 +255,53 @@ CREATE TABLE IF NOT EXISTS genero_musical(
     deletado_por UUID DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS genero_da_musica(
+CREATE INDEX idx_album_artista_id ON album(artista_id);
+CREATE INDEX idx_album_nome ON album(nome);
+
+CREATE TABLE album_musica (
     id UUID PRIMARY KEY,
-    genero_musical_id UUID NOT NULL,
-    musica_id UUID NOT NULL,
-    FOREIGN KEY (genero_musical_id) REFERENCES genero_musical(id),
-    FOREIGN KEY (musica_id) REFERENCES musica(id),
+    album_id UUID NOT NULL REFERENCES album(id),
+    musica_id UUID NOT NULL REFERENCES musica(id),
+    ordem INTEGER NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID DEFAULT NULL
+    deletado_por UUID DEFAULT NULL,
+    CONSTRAINT uq_album_musica UNIQUE (album_id, musica_id)
 );
 
-CREATE TABLE IF NOT EXISTS musica_da_tag(
+CREATE INDEX idx_album_musica_album_id ON album_musica(album_id);
+CREATE INDEX idx_album_musica_ordem ON album_musica(album_id, ordem);
+
+CREATE TABLE album_salvo (
     id UUID PRIMARY KEY,
-    tag_id UUID NOT NULL,
-    musica_id UUID NOT NULL,
-    FOREIGN KEY (tag_id) REFERENCES tag(id),
-    FOREIGN KEY (musica_id) REFERENCES musica(id),
+    album_id UUID NOT NULL REFERENCES album(id),
+    usuario_id UUID NOT NULL REFERENCES usuario(id),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMP,
     atualizado_em TIMESTAMP,
     deletado_em TIMESTAMP DEFAULT NULL,
     criado_por UUID,
     atualizado_por UUID,
-    deletado_por UUID DEFAULT NULL
+    deletado_por UUID DEFAULT NULL,
+    CONSTRAINT uq_album_salvo UNIQUE (album_id, usuario_id)
 );
+
+CREATE INDEX idx_album_salvo_usuario_id ON album_salvo(usuario_id);
+
+-- ===================================================
+-- JWT/AUTH
+-- ===================================================
+
+CREATE TABLE refresh_token(
+    id UUID PRIMARY KEY,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    expiracao TIMESTAMP NOT NULL,
+    revogado BOOLEAN NOT NULL DEFAULT FALSE,
+    usuario_id UUID NOT NULL REFERENCES usuario(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_refresh_token_usuario_id ON refresh_token(usuario_id);
