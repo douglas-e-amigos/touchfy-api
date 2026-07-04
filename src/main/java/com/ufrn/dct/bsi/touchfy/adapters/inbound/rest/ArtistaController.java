@@ -87,7 +87,7 @@ public class ArtistaController {
   }
 
   @PostMapping("/{id}/promover")
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<RecursoAtualizadoResponse> promover(@PathVariable final UUID id) {
     promoverUsuarioParaArtistaUseCase.execute(id);
     return ResponseEntity.ok(
