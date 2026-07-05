@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/touchfy_db
+    username: admin
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    baseline-on-migrate: true
+
+jwt:
+  access:
+    secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
+    expiration: 300000
+  refresh:
+    secret: "iVjLEy6quSta/OyWe1CmhKnuqU8zEV+X7eLr/OhMenI="
+    expiration: 604800000
+
+supabase:
+  url: http://localhost:3000
+  key: test
+
+storage:
+  endpoint: http://garage:3900
+  access-key: test
+  secret-key: test
+  bucket-name: touchfy-uploads
+  bucket-url: http://garage:3900/touchfy-uploads
+  region: garage
+
+app:
+  frontend-base-url: http://localhost:3000
+
+logging:
+  level:
+    root: INFO
+    com.ufrn.dct.bsi.touchfy: DEBUG
+    org.flywaydb: DEBUG
