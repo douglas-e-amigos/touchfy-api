@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @AllArgsConstructor
-public class GarageFileStorageImpl implements FileStorageService {
+public class S3FileStorageImpl implements FileStorageService {
   private final S3Client s3Client;
   private final String bucketName;
   private final String bucketUrl;
