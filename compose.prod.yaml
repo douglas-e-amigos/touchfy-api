@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: touchfy_app_prod
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      
+      # ==================== SUPABASE DATABASE ====================
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      
+      # ==================== JWT ====================
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      
+      # ==================== SUPABASE STORAGE ====================
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_BUCKET_NAME: ${SUPABASE_BUCKET_NAME}
+      SUPABASE_STORAGE_ENDPOINT: ${SUPABASE_STORAGE_ENDPOINT}
+      SUPABASE_STORAGE_REGION: ${SUPABASE_STORAGE_REGION}
+      SUPABASE_ACCESS_KEY: ${SUPABASE_ACCESS_KEY}
+      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY}
+      SUPABASE_BUCKET_URL: ${SUPABASE_BUCKET_URL}
+      
+      # ==================== FRONTEND ====================
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL}
+    
+    ports:
+      - "8080:8080"
+    networks:
+      - touchfy_network
+
+networks:
+  touchfy_network:
+    driver: bridge

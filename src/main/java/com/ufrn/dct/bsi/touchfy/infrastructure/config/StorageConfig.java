@@ -1,6 +1,6 @@
 package com.ufrn.dct.bsi.touchfy.infrastructure.config;
 
-import com.ufrn.dct.bsi.touchfy.adapters.outbound.storage.GarageFileStorageImpl;
+import com.ufrn.dct.bsi.touchfy.adapters.outbound.storage.S3FileStorageImpl;
 import com.ufrn.dct.bsi.touchfy.infrastructure.storage.FileStorageService;
 import com.ufrn.dct.bsi.touchfy.infrastructure.storage.StorageProperties;
 import java.net.URI;
@@ -24,7 +24,7 @@ public class StorageConfig {
 
     return S3Client.builder()
         .endpointOverride(URI.create(properties.getEndpoint()))
-        .region(Region.of("garage"))
+        .region(Region.of(properties.getRegion()))
         .credentialsProvider(StaticCredentialsProvider.create(credentials))
         .forcePathStyle(true)
         .serviceConfiguration(
@@ -38,7 +38,6 @@ public class StorageConfig {
   @Bean
   public FileStorageService fileStorageService(
       final S3Client s3Client, final StorageProperties properties) {
-    return new GarageFileStorageImpl(
-        s3Client, properties.getBucketName(), properties.getBucketUrl());
+    return new S3FileStorageImpl(s3Client, properties.getBucketName(), properties.getBucketUrl());
   }
 }

@@ -4,13 +4,6 @@ spring:
   docker:
     compose:
       enabled: false
-  datasource:
-    url: jdbc:postgresql://postgres:5432/touchfy_db
-    username: admin
-    password: 123456
-  jpa:
-    hibernate:
-      ddl-auto: none
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -19,34 +12,13 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 25MB
-  security:
-    user:
-      name: "admin"
-      password: "{noop}senhateste"
-
-logging:
-  level:
-    org.flywaydb: DEBUG
 
 jwt:
   access:
-    secret: "lZZkrieG7JXyfTG3e6cMciN5SrpXQmlQR/sNR4bpQP4="
-    expiration: 300000 # 5 minutos em milisegundos
+    expiration: 300000      # 5 minutos
   refresh:
-    secret: "iVjLEy6quSta/OyWe1CmhKnuqU8zEV+X7eLr/OhMenI="
-    expiration: 604800000 # 7 dias em milisegundos
+    expiration: 604800000   # 7 dias
 
-garage:
-  admin:
-    endpoint: http://garage:3903
-    token: "0qYrJTwNxc+JO/yWuIRZA8G6Hr0HpaIwr7dTlJd+Rqw="
-
-storage:
-  endpoint: http://garage:3900
-  access-key: "GKb31da6b5db60b2d3f566e8f7"
-  secret-key: "d33618b7c7922a30373b8051258393fabf6a805fa16caa9c9dd49e4b828513a7"
-  bucket-name: touchfy-uploads
-  bucket-url: http://garage:3900/touchfy-uploads
-
-app:
-  frontend-base-url: http://localhost:3000
+logging:
+  level:
+    org.flywaydb: INFO

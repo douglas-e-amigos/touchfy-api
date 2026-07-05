@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    baseline-on-migrate: false
+
+jwt:
+  access:
+    secret: ${JWT_ACCESS_SECRET}
+    expiration: 300000
+  refresh:
+    secret: ${JWT_REFRESH_SECRET}
+    expiration: 604800000
+
+supabase:
+  url: ${SUPABASE_URL}
+  key: ${SUPABASE_ANON_KEY}
+  storage-bucket: ${SUPABASE_BUCKET_NAME}
+
+storage:
+  endpoint: ${SUPABASE_STORAGE_ENDPOINT}
+  access-key: ${SUPABASE_ACCESS_KEY}
+  secret-key: ${SUPABASE_SECRET_KEY}
+  bucket-name: ${SUPABASE_BUCKET_NAME}
+  bucket-url: ${SUPABASE_BUCKET_URL}
+  region: ${SUPABASE_STORAGE_REGION}
+
+app:
+  frontend-base-url: ${FRONTEND_BASE_URL}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.ufrn.dct.bsi.touchfy: INFO
+    org.flywaydb: WARN
