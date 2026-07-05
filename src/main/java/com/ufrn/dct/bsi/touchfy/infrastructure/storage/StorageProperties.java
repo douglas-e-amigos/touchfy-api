@@ -13,4 +13,5 @@ public class StorageProperties {
   private String secretKey;
   private String bucketName;
   private String bucketUrl;
+  private String region;
 }
