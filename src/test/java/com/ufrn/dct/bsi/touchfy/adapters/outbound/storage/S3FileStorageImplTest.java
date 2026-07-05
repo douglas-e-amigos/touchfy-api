@@ -27,10 +27,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-class GarageFileStorageImplTest {
+class S3FileStorageImplTest {
 
   private S3Client s3Client;
-  private GarageFileStorageImpl storage;
+  private S3FileStorageImpl storage;
 
   private final String bucketName = "touchfy-uploads";
   private final String bucketUrl = "http://garage:3900/touchfy-uploads";
@@ -38,7 +38,7 @@ class GarageFileStorageImplTest {
   @BeforeEach
   void setUp() {
     s3Client = mock(S3Client.class);
-    storage = new GarageFileStorageImpl(s3Client, bucketName, bucketUrl);
+    storage = new S3FileStorageImpl(s3Client, bucketName, bucketUrl);
   }
 
   @Test
