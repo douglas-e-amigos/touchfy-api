@@ -308,4 +308,109 @@ class UsuarioRepositoryImplTest {
 
     verify(jpaRepository).save(usuarioEntity);
   }
+
+  @Test
+  void deveBuscarPorNomeUsuarioRetornandoDomain() {
+    final String nomeUsuario = "joao";
+    final var entity = UsuarioEntity.builder().id(UUID.randomUUID()).build();
+    final var usuario = mock(Usuario.class);
+    when(jpaRepository.findByNomeUsuario(nomeUsuario)).thenReturn(Optional.of(entity));
+    when(usuarioMapper.toDomain(entity)).thenReturn(usuario);
+
+    final Optional<Usuario> resultado = repository.buscarPorNomeUsuario(nomeUsuario);
+
+    assertTrue(resultado.isPresent());
+    assertEquals(usuario, resultado.get());
+  }
+
+  @Test
+  void deveRetornarVazioAoBuscarPorNomeUsuarioInexistente() {
+    when(jpaRepository.findByNomeUsuario("inexistente")).thenReturn(Optional.empty());
+
+    assertTrue(repository.buscarPorNomeUsuario("inexistente").isEmpty());
+  }
+
+  @Test
+  void deveDeletarUsuarioComSoftDelete() {
+    final UUID id = UUID.randomUUID();
+    final UUID auditorId = UUID.randomUUID();
+    when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(auditorId));
+    final var entity = UsuarioEntity.builder().id(id).build();
+    when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+
+    repository.deletar(id);
+
+    assertFalse(entity.getAtivo());
+    assertNotNull(entity.getDeletadoEm());
+    assertEquals(auditorId, entity.getDeletadoPor());
+    verify(jpaRepository).save(entity);
+  }
+
+  @Test
+  void naoDeveFazerNadaAoDeletarUsuarioInexistente() {
+    when(jpaRepository.findById(any())).thenReturn(Optional.empty());
+
+    repository.deletar(UUID.randomUUID());
+
+    verify(jpaRepository, never()).save(any());
+  }
+
+  @Test
+  void deveAdicionarRole() {
+    final UUID usuarioId = UUID.randomUUID();
+    final var entity =
+        UsuarioEntity.builder().id(usuarioId).roles(new java.util.HashSet<>()).build();
+    final var roleEntity = new RoleEntity();
+    roleEntity.setName(ERole.ARTISTA);
+    when(jpaRepository.findById(usuarioId)).thenReturn(Optional.of(entity));
+    when(roleJpaRepository.findByName(ERole.ARTISTA)).thenReturn(Optional.of(roleEntity));
+
+    repository.adicionarRole(usuarioId, ERole.ARTISTA);
+
+    assertTrue(entity.getRoles().contains(roleEntity));
+    verify(jpaRepository).save(entity);
+  }
+
+  @Test
+  void deveLancarExcecaoAoAdicionarRoleParaUsuarioInexistente() {
+    when(jpaRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(
+        RuntimeException.class, () -> repository.adicionarRole(UUID.randomUUID(), ERole.ARTISTA));
+  }
+
+  @Test
+  void deveRemoverRole() {
+    final UUID usuarioId = UUID.randomUUID();
+    final var roleEntity = new RoleEntity();
+    roleEntity.setName(ERole.OUVINTE);
+    final var entity =
+        UsuarioEntity.builder()
+            .id(usuarioId)
+            .roles(new java.util.HashSet<>(Set.of(roleEntity)))
+            .build();
+    when(jpaRepository.findById(usuarioId)).thenReturn(Optional.of(entity));
+    when(roleJpaRepository.findByName(ERole.OUVINTE)).thenReturn(Optional.of(roleEntity));
+
+    repository.removerRole(usuarioId, ERole.OUVINTE);
+
+    assertTrue(entity.getRoles().isEmpty());
+    verify(jpaRepository).save(entity);
+  }
+
+  @Test
+  void deveAtualizarDadosArtista() {
+    final UUID id = UUID.randomUUID();
+    final var entity = UsuarioEntity.builder().id(id).build();
+    final var request =
+        new com.ufrn.dct.bsi.touchfy.application.dtos.artista.AtualizarDadosArtistaRequest(
+            "Novo Nome", "Nova Desc");
+    when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+
+    repository.atualizarDadosArtista(id, request);
+
+    assertEquals("Novo Nome", entity.getNome());
+    assertEquals("Nova Desc", entity.getDescricao());
+    verify(jpaRepository).save(entity);
+  }
 }

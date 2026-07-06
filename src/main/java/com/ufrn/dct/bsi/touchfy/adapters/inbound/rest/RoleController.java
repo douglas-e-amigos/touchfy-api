@@ -56,7 +56,7 @@ public class RoleController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthority('role:patch')")
+  @PreAuthorize("hasAuthority('role:update')")
   public ResponseEntity<RecursoAtualizadoResponse> atualizar(
       @PathVariable final Long id, @RequestBody @Valid final UpdateRoleRequest request) {
     atualizarRoleUseCase.execute(id, request);

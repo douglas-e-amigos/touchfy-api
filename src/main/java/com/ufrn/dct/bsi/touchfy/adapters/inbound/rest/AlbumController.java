@@ -53,7 +53,7 @@ public class AlbumController {
   private final ListarAlbunsSalvosUseCase listarAlbunsSalvosUseCase;
 
   @PostMapping
-  @PreAuthorize("hasRole('ARTISTA')")
+  @PreAuthorize("hasAuthority('album:create')")
   public ResponseEntity<NovoRecursoResponse> criarAlbum(
       @RequestBody @Valid final CriarAlbumRequest request) {
     final UUID usuarioId = getUsuarioId();
@@ -67,7 +67,7 @@ public class AlbumController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ARTISTA')")
+  @PreAuthorize("hasAuthority('album:update')")
   public ResponseEntity<RecursoAtualizadoResponse> atualizarAlbum(
       @PathVariable("id") final UUID id, @RequestBody @Valid final AtualizarAlbumRequest request) {
     final UUID usuarioId = getUsuarioId();
@@ -81,7 +81,7 @@ public class AlbumController {
   }
 
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasRole('ARTISTA')")
+  @PreAuthorize("hasAuthority('album:delete')")
   public ResponseEntity<RecursoDeletadoResponse> deletarAlbum(@PathVariable("id") final UUID id) {
     final UUID usuarioId = getUsuarioId();
     deletarAlbumUseCase.execute(id, usuarioId);
@@ -104,7 +104,7 @@ public class AlbumController {
   }
 
   @PostMapping("/{id}/musicas")
-  @PreAuthorize("hasRole('ARTISTA')")
+  @PreAuthorize("hasAuthority('album:update')")
   public ResponseEntity<NovoRecursoResponse> adicionarMusica(
       @PathVariable("id") final UUID id,
       @RequestBody @Valid final AdicionarMusicaAlbumRequest request) {
