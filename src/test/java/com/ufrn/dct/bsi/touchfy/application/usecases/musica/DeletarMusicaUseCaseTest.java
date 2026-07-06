@@ -12,6 +12,7 @@ import com.ufrn.dct.bsi.touchfy.application.usecases.arquivo.DeletarArquivoUseCa
 import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
 import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -83,5 +84,54 @@ class DeletarMusicaUseCaseTest {
 
     assertEquals("ID é obrigatório.", exception.getMessage());
     verify(repository, never()).acharPeloId(org.mockito.ArgumentMatchers.any());
+  }
+
+  @Test
+  void deveLancarNaoAutenticadoExcecaoQuandoAuditorVazio() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+    final AuditorAware<UUID> auditorAware = Optional::<UUID>empty;
+    final DeletarMusicaUseCase useCase =
+        new DeletarMusicaUseCase(repository, deletarArquivoUseCase, auditorAware);
+    final UUID id = UUID.randomUUID();
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Tempo Perdido")
+            .caminhoDoArquivo("musicas/arquivo.mp3")
+            .criadoPor(UUID.randomUUID())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+    final var exception = assertThrows(NaoAutenticadoException.class, () -> useCase.execute(id));
+
+    assertEquals("Usuário não autenticado.", exception.getMessage());
+  }
+
+  @Test
+  void deveDeletarMusicaSemArquivo() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+    final UUID artistaId = UUID.randomUUID();
+    final AuditorAware<UUID> auditorAware = () -> Optional.of(artistaId);
+    final DeletarMusicaUseCase useCase =
+        new DeletarMusicaUseCase(repository, deletarArquivoUseCase, auditorAware);
+    final UUID id = UUID.randomUUID();
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Tempo Perdido")
+            .caminhoDoArquivo("musicas/temp.mp3")
+            .criadoPor(artistaId)
+            .build();
+    musica.setCaminhoDoArquivo(null);
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+    useCase.execute(id);
+
+    verify(deletarArquivoUseCase, never()).execute(org.mockito.ArgumentMatchers.anyString());
+    verify(repository, times(1)).deletar(id);
   }
 }

@@ -112,4 +112,208 @@ class StreamingMusicaUseCaseTest {
 
     assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, exception.getStatusCode());
   }
+
+  @Test
+  void deveRetornarRespostaVaziaQuandoArquivoVazio() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = new byte[0];
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final StreamingMusicaResponse response = useCase.execute(id, "bytes=0-");
+
+    assertFalse(response.parcial());
+    assertEquals(0, response.inicio());
+    assertEquals(0, response.fim());
+    assertEquals(0, response.tamanhoTotal());
+  }
+
+  @Test
+  void deveLancarExcecaoQuandoRangeSemPrefixoBytes() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abc".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> useCase.execute(id, "invalid"));
+
+    assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, exception.getStatusCode());
+  }
+
+  @Test
+  void deveLancarExcecaoQuandoRangeVazio() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abc".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> useCase.execute(id, "bytes="));
+
+    assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, exception.getStatusCode());
+  }
+
+  @Test
+  void deveLancarExcecaoQuandoRangeTemVirgula() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abc".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> useCase.execute(id, "bytes=0-5,10-15"));
+
+    assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, exception.getStatusCode());
+  }
+
+  @Test
+  void deveRetornarSuffixRange() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abcdefghij".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final StreamingMusicaResponse response = useCase.execute(id, "bytes=-5");
+
+    assertTrue(response.parcial());
+    assertEquals(5, response.inicio());
+    assertEquals(9, response.fim());
+    assertEquals(10, response.tamanhoTotal());
+    assertArrayEquals("fghij".getBytes(StandardCharsets.UTF_8), response.conteudo());
+  }
+
+  @Test
+  void deveRetornarRangeAteOFinal() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abcdefghij".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final StreamingMusicaResponse response = useCase.execute(id, "bytes=3-");
+
+    assertTrue(response.parcial());
+    assertEquals(3, response.inicio());
+    assertEquals(9, response.fim());
+    assertEquals(10, response.tamanhoTotal());
+    assertArrayEquals("defghij".getBytes(StandardCharsets.UTF_8), response.conteudo());
+  }
+
+  @Test
+  void deveLancarExcecaoQuandoInicioExcedeTamanho() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final BuscarArquivoUseCase buscarArquivoUseCase = mock(BuscarArquivoUseCase.class);
+    final StreamingMusicaUseCase useCase =
+        new StreamingMusicaUseCase(repository, buscarArquivoUseCase);
+    final UUID id = UUID.randomUUID();
+    final byte[] arquivo = "abc".getBytes(StandardCharsets.UTF_8);
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Música teste")
+            .caminhoDoArquivo("musicas/teste.mp3")
+            .tags(List.of())
+            .generosMusicais(List.of())
+            .build();
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+    when(buscarArquivoUseCase.execute("musicas/teste.mp3"))
+        .thenReturn(
+            new ArquivoRecuperadoResponse("teste.mp3", "musicas/teste.mp3", "audio/mpeg", arquivo));
+
+    final ResponseStatusException exception =
+        assertThrows(ResponseStatusException.class, () -> useCase.execute(id, "bytes=10-20"));
+
+    assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, exception.getStatusCode());
+  }
 }

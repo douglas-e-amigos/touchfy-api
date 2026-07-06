@@ -2,7 +2,9 @@ package com.ufrn.dct.bsi.touchfy.application.usecases.musica;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,12 +17,15 @@ import com.ufrn.dct.bsi.touchfy.domain.musica.models.Musica;
 import com.ufrn.dct.bsi.touchfy.domain.musica.repositories.MusicaRepository;
 import com.ufrn.dct.bsi.touchfy.shared.dtos.ArquivoArmazenamentoResponse;
 import com.ufrn.dct.bsi.touchfy.shared.exceptions.AcessoNegadoException;
+import com.ufrn.dct.bsi.touchfy.shared.exceptions.NaoAutenticadoException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 class AtualizarMusicaUseCaseTest {
 
@@ -146,5 +151,71 @@ class AtualizarMusicaUseCaseTest {
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(null, null));
 
     assertEquals("Os dados da música são obrigatórios.", exception.getMessage());
+  }
+
+  @Test
+  void deveLancarNaoAutenticadoExcecaoQuandoAuditorVazio() {
+    final MusicaRepository repository = mock(MusicaRepository.class);
+    final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+    final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+    final AuditorAware<UUID> auditorAware = Optional::<UUID>empty;
+    final AtualizarMusicaUseCase useCase =
+        new AtualizarMusicaUseCase(
+            repository, uploadArquivoUseCase, deletarArquivoUseCase, auditorAware);
+    final UUID id = UUID.randomUUID();
+    final Musica musica =
+        Musica.builder()
+            .id(id)
+            .nome("Tempo Perdido")
+            .caminhoDoArquivo("musicas/arquivo.mp3")
+            .criadoPor(UUID.randomUUID())
+            .build();
+
+    final AtualizarMusicaRequest request =
+        new AtualizarMusicaRequest("Nova Musica", null, null, null, null);
+
+    when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+    final var exception =
+        assertThrows(NaoAutenticadoException.class, () -> useCase.execute(id, request));
+
+    assertEquals("Usuário não autenticado.", exception.getMessage());
+  }
+
+  @Test
+  void devePermitirAtualizacaoPorAdmin() {
+    try (var securityMock = mockStatic(SecurityContextHolder.class)) {
+      final var authentication = mock(org.springframework.security.core.Authentication.class);
+      final var context = mock(org.springframework.security.core.context.SecurityContext.class);
+      when(context.getAuthentication()).thenReturn(authentication);
+      doReturn(List.of(new SimpleGrantedAuthority("ROLE_ADMIN")))
+          .when(authentication)
+          .getAuthorities();
+      securityMock.when(SecurityContextHolder::getContext).thenReturn(context);
+
+      final MusicaRepository repository = mock(MusicaRepository.class);
+      final UploadArquivoUseCase uploadArquivoUseCase = mock(UploadArquivoUseCase.class);
+      final DeletarArquivoUseCase deletarArquivoUseCase = mock(DeletarArquivoUseCase.class);
+      final AuditorAware<UUID> auditorAware = () -> Optional.of(UUID.randomUUID());
+      final AtualizarMusicaUseCase useCase =
+          new AtualizarMusicaUseCase(
+              repository, uploadArquivoUseCase, deletarArquivoUseCase, auditorAware);
+      final UUID id = UUID.randomUUID();
+      final AtualizarMusicaRequest request =
+          new AtualizarMusicaRequest("Tempo Perdido", null, null, null, null);
+      final Musica musica =
+          Musica.builder()
+              .id(id)
+              .nome("Tempo Perdido")
+              .caminhoDoArquivo("musicas/arquivo.mp3")
+              .criadoPor(UUID.randomUUID())
+              .build();
+
+      when(repository.acharPeloId(id)).thenReturn(Optional.of(musica));
+
+      useCase.execute(id, request);
+
+      verify(repository, times(1)).atualizar(id, request, null);
+    }
   }
 }
