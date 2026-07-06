@@ -56,7 +56,7 @@ public class PermissionController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthority('permission:patch')")
+  @PreAuthorize("hasAuthority('permission:update')")
   public ResponseEntity<RecursoAtualizadoResponse> atualizar(
       @PathVariable final Long id, @RequestBody @Valid final UpdatePermissionRequest request) {
     atualizarPermissionUseCase.execute(id, request);
